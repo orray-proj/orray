@@ -1,31 +1,60 @@
-# Build the manager binary
-FROM golang:1.25 AS builder
+####################################################################################################
+# back-end-builder
+####################################################################################################
+FROM --platform=$BUILDPLATFORM golang:1.25.5-bookworm AS back-end-builder
+
 ARG TARGETOS
 ARG TARGETARCH
 
-WORKDIR /workspace
-# Copy the Go Modules manifests
-COPY go.mod go.mod
-COPY go.sum go.sum
-# cache deps before building and copying source so that we don't need to re-download as much
-# and so that source changes don't invalidate our downloaded layer
+ARG VERSION_PACKAGE=github.com/orray-proj/orray/pkg/version
+
+ARG CGO_ENABLED=0
+
+WORKDIR /orray
+COPY ["go.mod", "go.sum", "./"]
 RUN go mod download
+COPY api/ api/
+COPY cmd/ cmd/
+COPY pkg/ pkg/
 
-# Copy the Go source (relies on .dockerignore to filter)
-COPY . .
+ARG VERSION
+ARG GIT_COMMIT
+ARG GIT_TREE_STATE
 
-# Build
-# the GOARCH has no default value to allow the binary to be built according to the host where the command
-# was called. For example, if we call make docker-build in a local env which has the Apple Silicon M1 SO
-# the docker BUILDPLATFORM arg will be linux/arm64 when for Apple x86 it will be linux/amd64. Therefore,
-# by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
-RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager cmd/main.go
+RUN CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build \
+    -ldflags="-s -w -X ${VERSION_PACKAGE}.version=${VERSION} -X ${VERSION_PACKAGE}.buildDate=$(date -u +'%Y-%m-%dT%H:%M:%SZ') -X ${VERSION_PACKAGE}.gitCommit=${GIT_COMMIT} -X ${VERSION_PACKAGE}.gitTreeState=${GIT_TREE_STATE}" \
+    -o bin/orray ./cmd/controlplane
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
-WORKDIR /
-COPY --from=builder /workspace/manager .
-USER 65532:65532
+####################################################################################################
+# back-end-dev
+# - no UI
+# - relies on go build that runs on host
+# - supports development
+# - not used for official image builds
+####################################################################################################
+FROM alpine:latest AS back-end-dev
 
-ENTRYPOINT ["/manager"]
+RUN apk update && apk add ca-certificates git gpg gpg-agent openssh-client tini
+
+COPY ./bin/controlplane/orray /usr/local/bin/orray
+
+RUN adduser -D -H -u 1000 orray
+USER 1000:0
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["/usr/local/bin/orray"]
+
+####################################################################################################
+# final
+# - the official image we publish
+# - purposefully last so that it is the default target when building
+####################################################################################################
+FROM alpine:latest AS final
+
+
+RUN apk update && apk add ca-certificates git gpg gpg-agent openssh-client tini
+
+COPY --from=back-end-builder /orray/bin/ /usr/local/bin/
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["/usr/local/bin/orray"]
