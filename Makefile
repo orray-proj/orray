@@ -40,6 +40,11 @@ manifests: ## Generate CustomResourceDefinition objects.
 generate: ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
+.PHONY: codegen-docs
+codegen-docs:
+	bun install -g @bitnami/readme-generator-for-helm
+	bash hack/helm-docs/helm-docs.sh
+
 .PHONY: fmt
 fmt: ## Run go fmt against code.
 	go fmt ./...
