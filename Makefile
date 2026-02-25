@@ -34,7 +34,7 @@ help: ## Display this help.
 
 .PHONY: manifests
 manifests: ## Generate CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/web-operator/resources/crds
+	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/orray/resources/crds
 
 .PHONY: generate
 generate: ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
@@ -68,7 +68,7 @@ lint-config: ## Verify golangci-lint linter configuration
 
 .PHONY: build
 build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/web-operator ./cmd/controlplane
+	go build -o bin/orray ./cmd/controlplane
 
 .PHONY: build-image
 build-image: ## Build the image

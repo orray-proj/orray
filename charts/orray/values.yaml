@@ -18,17 +18,17 @@ crds:
 
 ## @section Global Parameters
 global:
-  ## @param global.env Environment variables to add to all web-operator pods.
+  ## @param global.env Environment variables to add to all orray pods.
   env: []
   #  - name: ENV_NAME
   #    value: value
-  ## @param global.envFrom Environment variables to add to all web-operator pods from ConfigMaps or Secrets.
+  ## @param global.envFrom Environment variables to add to all orray pods from ConfigMaps or Secrets.
   envFrom: []
   #  - configMapRef:
   #      name: config-map-name
   #  - secretRef:
   #      name: secret-name
-  ## @param global.nodeSelector Default node selector for all web-operator pods.
+  ## @param global.nodeSelector Default node selector for all orray pods.
   nodeSelector: {}
 
   ## @param global.labels Labels to add to all resources.
@@ -40,11 +40,11 @@ global:
   ## @param global.podAnnotations Annotations to add to pods.
   podAnnotations: {}
 
-  ## @param global.tolerations Default tolerations for all web-operator pods.
+  ## @param global.tolerations Default tolerations for all orray pods.
   tolerations: []
-  ## @param global.affinity Default affinity for all web-operator pods.
+  ## @param global.affinity Default affinity for all orray pods.
   affinity: {}
-  ## @param global.securityContext Default security context for all web-operator pods.
+  ## @param global.securityContext Default security context for all orray pods.
   securityContext: {}
 
 ## @section Controller
@@ -64,7 +64,7 @@ controller:
 
   ## All settings relating to the service account for the controller
   serviceAccount:
-    ## @param controller.serviceAccount.clusterWideSecretReadingEnabled Specifies whether the controller's ServiceAccount should be granted read permissions to Secrets CLUSTER-WIDE in the web-operator control plane's cluster.
+    ## @param controller.serviceAccount.clusterWideSecretReadingEnabled Specifies whether the controller's ServiceAccount should be granted read permissions to Secrets CLUSTER-WIDE in the orray control plane's cluster.
     clusterWideSecretReadingEnabled: true
   ## Reconciler-specific settings
   reconcilers:
