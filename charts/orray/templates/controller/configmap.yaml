@@ -1,0 +1,12 @@
+{{- if .Values.controller.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orray-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "orray.labels" . | nindent 4 }}
+    {{- include "orray.controller.labels" . | nindent 4 }}
+data:
+  LOG_LEVEL: {{ quote .Values.controller.logLevel }}
+{{- end }}
