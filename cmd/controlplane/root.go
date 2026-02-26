@@ -1,4 +1,4 @@
-package controlplane
+package main
 
 import (
 	"context"
@@ -16,17 +16,7 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the RootCmd.
 func Execute(ctx context.Context) error {
+	rootCmd.AddCommand(newControllerCommand())
+	rootCmd.AddCommand(newKubernetesWebhooksServerCommand())
 	return rootCmd.ExecuteContext(ctx)
-}
-
-func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.orray.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
