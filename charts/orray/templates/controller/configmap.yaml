@@ -9,4 +9,5 @@ metadata:
     {{- include "orray.controller.labels" . | nindent 4 }}
 data:
   LOG_LEVEL: {{ quote .Values.controller.logLevel }}
+  LOG_FORMAT: {{ quote .Values.controller.logFormat }}
 {{- end }}

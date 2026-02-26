@@ -1,180 +1,148 @@
-package controlplane
+package main
 
 import (
-	"crypto/tls"
-	"flag"
-	"os"
+	"context"
+	"fmt"
+	stdruntime "runtime"
+	"sync"
 
-	"github.com/spf13/cobra"
-
-	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
-	// to ensure that exec-entrypoint and run can make use of them.
-	_ "k8s.io/client-go/plugin/pkg/client/auth"
-
-	"k8s.io/apimachinery/pkg/runtime"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	batchv1 "k8s.io/api/batch/v1"
+	coordinationv1 "k8s.io/api/coordination/v1"
+	corev1 "k8s.io/api/core/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/healthz"
-	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-	"sigs.k8s.io/controller-runtime/pkg/metrics/filters"
-	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
+
+	"github.com/orray-proj/orray/pkg/kubernetes"
+	versionpkg "github.com/orray-proj/orray/pkg/version"
+	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 )
 
-var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
-)
-
-func init() {
-	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-
-	// +kubebuilder:scaffold:scheme
-
-	rootCmd.AddCommand(controllerCmd)
+type controller struct {
+	baseComponent
 }
 
-var (
-	metricsAddr          string
-	metricsCertPath      string
-	metricsCertName      string
-	metricsCertKey       string
-	webhookCertPath      string
-	webhookCertName      string
-	webhookCertKey       string
-	enableLeaderElection bool
-	probeAddr            string
-	secureMetrics        bool
-	enableHTTP2          bool
-	zapOpts              = zap.Options{
-		Development: true,
+func newControllerCommand() *cobra.Command {
+	ctrl := &controller{}
+	if err := ctrl.Bootstrap(); err != nil {
+		panic(err)
 	}
-)
 
-var controllerCmd = &cobra.Command{
-	Use:   "controller",
-	Short: "Run the Orray controller manager",
-	Run: func(cmd *cobra.Command, args []string) {
-		runController()
-	},
+	cmd := &cobra.Command{
+		Use:               "controller",
+		Short:             "Run the Orray controller manager",
+		DisableAutoGenTag: true,
+		SilenceErrors:     true,
+		SilenceUsage:      true,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			version := versionpkg.GetVersion()
+			startupLogger := ctrl.Logger.WithValues(
+				"version", version.Version,
+				"commit", version.GitCommit,
+				"GOMAXPROCS", stdruntime.GOMAXPROCS(0),
+			)
+
+			startupLogger.Info("Starting Orray Controller")
+
+			return ctrl.run(cmd.Context())
+		},
+	}
+
+	return cmd
 }
 
-func init() {
-	controllerCmd.Flags().StringVar(&metricsAddr, "metrics-bind-address", "0", "The address the metrics endpoint binds to. "+
-		"Use :8443 for HTTPS or :8080 for HTTP, or leave as 0 to disable the metrics service.")
-	controllerCmd.Flags().StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	controllerCmd.Flags().BoolVar(&enableLeaderElection, "leader-elect", false,
-		"Enable leader election for controller manager. "+
-			"Enabling this will ensure there is only one active controller manager.")
-	controllerCmd.Flags().BoolVar(&secureMetrics, "metrics-secure", true,
-		"If set, the metrics endpoint is served securely via HTTPS. Use --metrics-secure=false to use HTTP instead.")
-	controllerCmd.Flags().StringVar(&webhookCertPath, "webhook-cert-path", "", "The directory that contains the webhook certificate.")
-	controllerCmd.Flags().StringVar(&webhookCertName, "webhook-cert-name", "tls.crt", "The name of the webhook certificate file.")
-	controllerCmd.Flags().StringVar(&webhookCertKey, "webhook-cert-key", "tls.key", "The name of the webhook key file.")
-	controllerCmd.Flags().StringVar(&metricsCertPath, "metrics-cert-path", "",
-		"The directory that contains the metrics server certificate.")
-	controllerCmd.Flags().StringVar(&metricsCertName, "metrics-cert-name", "tls.crt", "The name of the metrics server certificate file.")
-	controllerCmd.Flags().StringVar(&metricsCertKey, "metrics-cert-key", "tls.key", "The name of the metrics server key file.")
-	controllerCmd.Flags().BoolVar(&enableHTTP2, "enable-http2", false,
-		"If set, HTTP/2 will be enabled for the metrics and webhook servers")
+// run runs the controller
+func (c *controller) run(ctx context.Context) error {
+	mgr, err := c.setupControllerManager(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to setup orray controller manager: %w", err)
+	}
 
-	// Bind zap flags
-	fs := flag.NewFlagSet("zap", flag.ExitOnError)
-	zapOpts.BindFlags(fs)
-	controllerCmd.Flags().AddGoFlagSet(fs)
+	// TODO: setup reconcilers
+	return startControllerManager(ctx, mgr)
 }
 
-func runController() {
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&zapOpts)))
+// setupControllerManager sets up the controller manager.
+func (c *controller) setupControllerManager(_ context.Context) (manager.Manager, error) {
+	logger := c.Logger
 
-	var tlsOpts []func(*tls.Config)
-	// if the enable-http2 flag is false (the default), http/2 should be disabled
-	// due to its vulnerabilities. More specifically, disabling http/2 will
-	// prevent from being vulnerable to the HTTP/2 Stream Cancellation and
-	// Rapid Reset CVEs. For more information see:
-	// - https://github.com/advisories/GHSA-qppj-fm5r-hxr3
-	// - https://github.com/advisories/GHSA-4374-p667-p6c8
-	disableHTTP2 := func(c *tls.Config) {
-		setupLog.Info("Disabling HTTP/2")
-		c.NextProtos = []string{"http/1.1"}
+	logger.Debug("loading in-cluster REST config")
+	restCfg, err := kubernetes.NewInClusterConfig()
+	if err != nil {
+		return nil, fmt.Errorf("error loading in-cluster REST config: %w", err)
 	}
 
-	if !enableHTTP2 {
-		tlsOpts = append(tlsOpts, disableHTTP2)
+	scheme := runtime.NewScheme()
+	if err = corev1.AddToScheme(scheme); err != nil {
+		return nil, fmt.Errorf(
+			"error adding Kubernetes core API to controller manager scheme: %w",
+			err,
+		)
+	}
+	if err = batchv1.AddToScheme(scheme); err != nil {
+		return nil, fmt.Errorf(
+			"error adding Kubernetes batch API to controller manager scheme: %w",
+			err,
+		)
 	}
 
-	// Initial webhook TLS options
-	webhookTLSOpts := tlsOpts
-	webhookServerOptions := webhook.Options{
-		TLSOpts: webhookTLSOpts,
+	if err = coordinationv1.AddToScheme(scheme); err != nil {
+		return nil, fmt.Errorf(
+			"error adding Kubernetes coordination API to controller manager scheme: %w",
+			err,
+		)
 	}
 
-	if len(webhookCertPath) > 0 {
-		setupLog.Info("Initializing webhook certificate watcher using provided certificates",
-			"webhook-cert-path", webhookCertPath, "webhook-cert-name", webhookCertName, "webhook-cert-key", webhookCertKey)
-
-		webhookServerOptions.CertDir = webhookCertPath
-		webhookServerOptions.CertName = webhookCertName
-		webhookServerOptions.KeyName = webhookCertKey
-	}
-
-	webhookServer := webhook.NewServer(webhookServerOptions)
-
-	// Metrics endpoint is enabled in 'config/default/kustomization.yaml'. The Metrics options configure the server.
-	// More info:
-	// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.23.1/pkg/metrics/server
-	// - https://book.kubebuilder.io/reference/metrics.html
-	metricsServerOptions := metricsserver.Options{
-		BindAddress:   metricsAddr,
-		SecureServing: secureMetrics,
-		TLSOpts:       tlsOpts,
-	}
-
-	if secureMetrics {
-		// FilterProvider is used to protect the metrics endpoint with authn/authz.
-		// These configurations ensure that only authorized users and service accounts
-		// can access the metrics endpoint. The RBAC are configured in 'config/rbac/kustomization.yaml'. More info:
-		// https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.23.1/pkg/metrics/filters#WithAuthenticationAndAuthorization
-		metricsServerOptions.FilterProvider = filters.WithAuthenticationAndAuthorization
-	}
-
-	if len(metricsCertPath) > 0 {
-		setupLog.Info("Initializing metrics certificate watcher using provided certificates",
-			"metrics-cert-path", metricsCertPath, "metrics-cert-name", metricsCertName, "metrics-cert-key", metricsCertKey)
-
-		metricsServerOptions.CertDir = metricsCertPath
-		metricsServerOptions.CertName = metricsCertName
-		metricsServerOptions.KeyName = metricsCertKey
-	}
-
-	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:                 scheme,
-		Metrics:                metricsServerOptions,
-		WebhookServer:          webhookServer,
-		HealthProbeBindAddress: probeAddr,
-		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "5da98517.orray.dev",
+	mgr, err := ctrl.NewManager(restCfg, ctrl.Options{
+		Scheme: scheme,
+		Metrics: server.Options{
+			BindAddress: "0",
+		},
+		PprofBindAddress: c.Config.PprofBindAddress,
+		Client: client.Options{
+			Cache: &client.CacheOptions{
+				DisableFor: []client.Object{&corev1.Secret{}},
+			},
+		},
+		// Add leader election configuration
+		LeaderElection:          true,
+		LeaderElectionNamespace: "orray-system",
+		LeaderElectionID:        "orray-controller",
 	})
 	if err != nil {
-		setupLog.Error(err, "Failed to start manager")
-		os.Exit(1)
+		return nil, fmt.Errorf("failed to create controller manager: %w", err)
 	}
 
-	// +kubebuilder:scaffold:builder
+	// TODO: add indexer
+	return mgr, nil
+}
 
-	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
-		setupLog.Error(err, "Failed to set up health check")
-		os.Exit(1)
-	}
-	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
-		setupLog.Error(err, "Failed to set up ready check")
-		os.Exit(1)
-	}
+// startControllerManager starts the controller manager.
+func startControllerManager(ctx context.Context, mgr manager.Manager) error {
+	var (
+		errChan = make(chan error)
+		wg      sync.WaitGroup
+	)
 
-	setupLog.Info("Starting manager")
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
-		setupLog.Error(err, "Failed to run manager")
-		os.Exit(1)
+	wg.Go(func() {
+		if err := mgr.Start(ctx); err != nil {
+			errChan <- fmt.Errorf("failed to start controller manager: %w", err)
+		}
+	})
+
+	// Adapt wg to a channel that can be used in a select
+	doneCh := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(doneCh)
+	}()
+
+	select {
+	case err := <-errChan:
+		return err
+	case <-doneCh:
+		return nil
 	}
 }
