@@ -10,4 +10,5 @@ metadata:
 data:
   ORRAY_NAMESPACE: {{ .Release.Namespace }}
   LOG_LEVEL: {{ quote .Values.webhooksServer.logLevel }}
+  LOG_FORMAT: {{ quote .Values.webhooksServer.logFormat }}
 {{- end }}

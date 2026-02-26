@@ -76,6 +76,10 @@ controller:
 
   ## @param controller.logLevel The log level for the controller.
   logLevel: INFO
+
+  ## @param controller.logFormat The log format for the controller. Available options: console, json. Defaults to 'console'.
+  logFormat: console
+
   ## @param controller.resources Resources limits and requests for the controller containers.
   resources: {}
     # limits:
@@ -121,6 +125,9 @@ webhooksServer:
   replicas: 1
   ## @param webhooksServer.logLevel The log level for the webhooks server.
   logLevel: INFO
+
+  ## @param webhooksServer.logFormat The log format for the webhooks server. Available options: console, json. Defaults to 'console'.
+  logFormat: console
 
   ## @param webhooksServer.labels Labels to add to the api resources. Merges with `global.labels`, allowing you to override or add to the global labels.
   labels: {}

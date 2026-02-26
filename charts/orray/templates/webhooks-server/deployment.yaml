@@ -58,7 +58,7 @@ spec:
         image: {{ include "orray.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/sbin/tini", "--", "/usr/local/bin/orray"]
-        args: ["webhooks-server"]
+        args: ["kubernetes-webhooks-server"]
         env:
         - name: GOMEMLIMIT
           valueFrom:
