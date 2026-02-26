@@ -140,7 +140,7 @@ webhooksServer:
   ## @param webhooksServer.resources Resources limits and requests for the webhooks server containers.
 
   tls:
-    ## @param webhooksServer.tls.selfSignedCert  Whether to generate a self-signed certificate for the controller's built-in webhook server. If `true`, `cert-manager` CRDs **must** be present in the cluster. Kargo will create and use its own namespaced issuer. If `false`, a cert secret named `kargo-webhooks-server-cert` **must** be provided in the same namespace as Kargo. There is no provision for webhooks without TLS.
+    ## @param webhooksServer.tls.selfSignedCert  Whether to generate a self-signed certificate for the controller's built-in webhook server. If `true`, `cert-manager` CRDs **must** be present in the cluster. Orray will create and use its own namespaced issuer. If `false`, a cert secret named `orray-webhooks-server-cert` **must** be provided in the same namespace as Kargo. There is no provision for webhooks without TLS.
     selfSignedCert: true
 
   resources: {}
