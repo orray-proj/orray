@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 	stdruntime "runtime"
 
 	authzv1 "k8s.io/api/authorization/v1"
@@ -85,11 +84,11 @@ func (k *kubernetesWebhooksServer) run(ctx context.Context) error {
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		k.Logger.Error(err, "Failed to set up health check")
-		os.Exit(1)
+		return err
 	}
 	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
 		k.Logger.Error(err, "Failed to set up ready check")
-		os.Exit(1)
+		return err
 	}
 
 	// indexer := indexer.NewWebhooksServer(mgr)
