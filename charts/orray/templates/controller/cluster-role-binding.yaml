@@ -1,0 +1,16 @@
+{{- if and .Values.controller.enabled .Values.rbac.installClusterRoleBindings }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: orray-controller
+  labels:
+    {{- include "orray.labels" . | nindent 4 }}
+    {{- include "orray.controller.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: orray-controller
+subjects:
+- kind: ServiceAccount
+  namespace: {{ .Release.Namespace }}
+  name: orray-controller

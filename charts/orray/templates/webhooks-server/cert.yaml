@@ -1,0 +1,14 @@
+{{- if and .Values.webhooksServer.enabled .Values.webhooksServer.tls.selfSignedCert }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: orray-webhooks-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  dnsNames:
+  - orray-webhooks-server.{{ .Release.Namespace }}.svc
+  issuerRef:
+    kind: Issuer
+    name: orray-selfsigned-cert-issuer
+  secretName: orray-webhooks-server-cert
+{{- end }}

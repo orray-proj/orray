@@ -1,0 +1,62 @@
+{{- if and .Values.controller.enabled .Values.rbac.installClusterRoles }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: orray-controller
+  labels:
+    {{- include "orray.labels" . | nindent 4 }}
+    {{- include "orray.controller.labels" . | nindent 4 }}
+rules:
+# permissions for leader election
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - watch
+  - list
+  - get
+  - create
+  - delete
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+{{- if .Values.controller.serviceAccount.clusterWideSecretReadingEnabled }}
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}

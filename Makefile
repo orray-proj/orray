@@ -34,11 +34,16 @@ help: ## Display this help.
 
 .PHONY: manifests
 manifests: ## Generate CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/web-operator/resources/crds
+	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/orray/resources/crds
 
 .PHONY: generate
 generate: ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+
+.PHONY: codegen-docs
+codegen-docs:
+	bun install -g @bitnami/readme-generator-for-helm
+	bash hack/helm-docs/helm-docs.sh
 
 .PHONY: fmt
 fmt: ## Run go fmt against code.
@@ -68,7 +73,7 @@ lint-config: ## Verify golangci-lint linter configuration
 
 .PHONY: build
 build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/web-operator ./cmd/controlplane
+	go build -o bin/orray ./cmd/controlplane
 
 .PHONY: build-image
 build-image: ## Build the image
