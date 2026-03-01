@@ -39,6 +39,9 @@ export function LLMCopyButton({
       await navigator.clipboard.write([
         new ClipboardItem({
           "text/plain": fetch(markdownUrl).then(async (res) => {
+            if (!res.ok) {
+              throw new Error(`Failed to fetch: ${res.status}`);
+            }
             const content = await res.text();
             cache.set(markdownUrl, content);
 
@@ -46,6 +49,8 @@ export function LLMCopyButton({
           }),
         }),
       ]);
+    } catch {
+      // fetch or clipboard write failed — no-op
     } finally {
       setLoading(false);
     }
