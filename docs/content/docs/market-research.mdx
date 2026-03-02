@@ -1,0 +1,141 @@
+---
+title: Market Research
+description: Kubernetes adoption, IDP landscape, and developer pain points.
+icon: TrendingUp
+---
+
+# Market Research — Kubernetes & Internal Developer Platforms
+
+<Callout type="info">
+**TL;DR**: ~80% of container-using orgs run K8s in production. 50% of companies (150+ devs) already use an IDP, 35% plan to within 12 months. Biggest pain points: 7.4-tool sprawl costing 6–15 hours/week, 78% waiting a day+ for SRE help, 94% dissatisfied with self-service tools. Backstage dominates open-source; Port, Cortex, OpsLevel lead commercial. No public data exists for input-device preferences in platform UIs — instrument your own product.
+</Callout>
+
+*Report date: 2026-02-28*
+
+---
+
+## 1. Kubernetes Adoption
+
+There is no single "% of all companies worldwide using K8s" because most companies have no container workloads. What is measured reliably is adoption **among container users / surveyed orgs**.
+
+- **82%** of container users run Kubernetes in production (2025)
+  — [CNCF Annual Survey](https://www.cncf.io/announcements/2026/01/20/kubernetes-established-as-the-de-facto-operating-system-for-ai-as-production-use-hits-82-in-2025-cncf-annual-cloud-native-survey/)
+  — [CNCF Report](https://www.cncf.io/reports/the-cncf-annual-cloud-native-survey/)
+
+- **~80%** of organizations run Kubernetes in production (enterprise-focused survey)
+  — [Komodor 2025 Report (PDF)](https://komodor.com/wp-content/uploads/2025/09/Komodor-2025-Enterprise-Kubernetes-Report.pdf)
+
+**Cite as**: "Kubernetes is used in production by ~80%+ of container-using organizations in recent large surveys."
+
+---
+
+## 2. Rate of K8s Adoption in New Companies
+
+No clean "new adopters per year" metric is publicly published in a credible way. CNCF indicates new cloud-native adoption is slowing — only a small share remains "early stage / not using."
+
+**Best proxy**: Track year-over-year change in "% running K8s in production" within the CNCF survey population.
+
+---
+
+## 3. Number of Devs and Services
+
+### Developers per company
+
+No standard public benchmark. Depends on industry, region, company size distribution, contractor inclusion. Stack Overflow Developer Survey has respondent-level data but not company-wide averages.
+— [Stack Overflow 2025](https://survey.stackoverflow.co/2025/developers/)
+
+**Practical approach**: Segment by company size (e.g. "companies with 150+ devs" per Port's reports, or "mid-market SaaS 200–2000 employees").
+
+### Services (microservices) per company
+
+No broadly accepted public metric. Case studies exist at specific large companies but aren't generalizable.
+— [Alibaba trace analysis (research)](https://arxiv.org/pdf/2504.13141)
+
+**Recommendation**: Treat service count as a banded variable (< 50, 50–200, 200–1000, 1000+) and validate with interviews/telemetry.
+
+---
+
+## 4. IDP Adoption
+
+Measured more often as "Internal Developer Portals" (Backstage-like). Best public stats are survey-based.
+
+- **50%** already use an internal developer portal; **35%** plan to in the next 12 months
+  (Port's 2024 sample: engineering leaders at companies with 150+ devs)
+  — [Port 2024 PDF](https://info.getport.io/hubfs/2024%20state%20of%20internal%20developer%20portals_edited.pdf)
+  — [Port 2024 landing page](https://port.io/state-of-internal-developer-portals-2024)
+
+- Port's 2025 report adds adoption/usage signals including tool usage patterns and metadata approaches.
+  — [Port 2025](https://www.port.io/state-of-internal-developer-portals)
+
+**Caveat**: Port is a vendor. Treat these as survey insights, not a definitive market census.
+
+---
+
+## 5. IDP Competitive Landscape
+
+<Tabs items={["Open-source", "Commercial"]}>
+  <Tab value="Open-source">
+    **Backstage** is the dominant open-source framework for internal developer portals.
+    — [Port 2024 PDF](https://info.getport.io/hubfs/2024%20state%20of%20internal%20developer%20portals_edited.pdf)
+  </Tab>
+  <Tab value="Commercial">
+    Based on ecosystem visibility (not a neutral market-share ranking):
+    **Port**, **Cortex**, **OpsLevel**, **Roadie** (Backstage SaaS), plus emerging vendors.
+    — [TFIR survey context](https://tfir.io/survey-understanding-backstage-and-internal-developer-portals-in-2025)
+
+    A true "most common by market share" list requires paid analyst research. No credible free public market-share table exists.
+  </Tab>
+</Tabs>
+
+---
+
+## 6. Biggest Pain Points with Current IDPs
+
+From Port's 2025 report (300 devs, US & Western Europe, orgs with 150+ devs):
+
+| Pain Point | Stat |
+|------------|------|
+| Tool sprawl | Average **7.4 tools** for everyday operational tasks |
+| Productivity loss | **75%** lose **6–15 hours/week** to tool sprawl |
+| Waiting on SRE/DevOps | **78%** wait **a day or more** for assistance |
+| Self-service dissatisfaction | **94%** dissatisfied with self-service tools |
+| Low trust in metadata | Only **3%** say data quality is completely trustworthy; **50%** have doubts |
+
+Sources:
+- [Port 2025 report](https://www.port.io/state-of-internal-developer-portals)
+- [DevOps.com summary](https://devops.com/survey-increased-tool-sprawl-saps-developer-productivity/)
+
+<Callout type="info" title="What this means for Orray">
+- **Reduce context switching** — unify discovery + action in a single spatial interface
+- **Make ownership/dependencies obvious** — service maps, blast radius visualization
+- **Shorten the "ask platform team" loop** — guardrailed self-service (I17 runbook actions)
+- **Make metadata trustworthy** — provenance/freshness transparency
+</Callout>
+
+---
+
+## 7. Input Devices for Platform Inspection
+
+No credible public research directly answers: "for inspecting an IDP, what % use mouse vs trackpad vs touch vs keyboard vs pen?"
+
+[Forrester 2025 end-user computing report](https://www.forrester.com/report/end-user-computing-market-insights-2025/RES181968) (paywalled) may contain device/input trends but not IDP-specific.
+
+**Best approach**: Instrument the product and publish your own metrics:
+- Pointer usage vs keyboard shortcut usage
+- Session device class (desktop/laptop/tablet)
+- Touch vs mouse/trackpad via Pointer Events (`pointerType`)
+- Complement with 10–20 targeted usability studies across roles (dev, SRE, EM)
+
+---
+
+## Sources
+
+- [CNCF Annual Cloud Native Survey (82% production)](https://www.cncf.io/announcements/2026/01/20/kubernetes-established-as-the-de-facto-operating-system-for-ai-as-production-use-hits-82-in-2025-cncf-annual-cloud-native-survey/)
+- [CNCF Report](https://www.cncf.io/reports/the-cncf-annual-cloud-native-survey/)
+- [Komodor 2025 Enterprise K8s Report](https://komodor.com/wp-content/uploads/2025/09/Komodor-2025-Enterprise-Kubernetes-Report.pdf)
+- [Port 2024 State of IDPs (PDF)](https://info.getport.io/hubfs/2024%20state%20of%20internal%20developer%20portals_edited.pdf)
+- [Port 2025 State of IDPs](https://www.port.io/state-of-internal-developer-portals)
+- [DevOps.com — tool sprawl](https://devops.com/survey-increased-tool-sprawl-saps-developer-productivity/)
+- [Stack Overflow Developer Survey 2025](https://survey.stackoverflow.co/2025/developers/)
+- [Alibaba microservices trace analysis](https://arxiv.org/pdf/2504.13141)
+- [Forrester end-user computing 2025 (paywalled)](https://www.forrester.com/report/end-user-computing-market-insights-2025/RES181968)

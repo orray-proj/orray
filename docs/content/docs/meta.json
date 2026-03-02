@@ -1,0 +1,12 @@
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "---Introduction---",
+    "index",
+    "---Research & Design---",
+    "ideas",
+    "market-research",
+    "performance"
+  ]
+}
