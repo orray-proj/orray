@@ -1,10 +1,14 @@
 ---
 title: Market Research
+description: Kubernetes adoption, IDP landscape, and developer pain points.
+icon: TrendingUp
 ---
 
 # Market Research — Kubernetes & Internal Developer Platforms
 
-> **TL;DR**: ~80% of container-using orgs run K8s in production. 50% of companies (150+ devs) already use an IDP, 35% plan to within 12 months. Biggest pain points: 7.4-tool sprawl costing 6–15 hours/week, 78% waiting a day+ for SRE help, 94% dissatisfied with self-service tools. Backstage dominates open-source; Port, Cortex, OpsLevel lead commercial. No public data exists for input-device preferences in platform UIs — instrument your own product.
+<Callout type="info">
+**TL;DR**: ~80% of container-using orgs run K8s in production. 50% of companies (150+ devs) already use an IDP, 35% plan to within 12 months. Biggest pain points: 7.4-tool sprawl costing 6–15 hours/week, 78% waiting a day+ for SRE help, 94% dissatisfied with self-service tools. Backstage dominates open-source; Port, Cortex, OpsLevel lead commercial. No public data exists for input-device preferences in platform UIs — instrument your own product.
+</Callout>
 
 *Report date: 2026-02-28*
 
@@ -69,18 +73,19 @@ Measured more often as "Internal Developer Portals" (Backstage-like). Best publi
 
 ## 5. IDP Competitive Landscape
 
-### Open-source
+<Tabs items={["Open-source", "Commercial"]}>
+  <Tab value="Open-source">
+    **Backstage** is the dominant open-source framework for internal developer portals.
+    — [Port 2024 PDF](https://info.getport.io/hubfs/2024%20state%20of%20internal%20developer%20portals_edited.pdf)
+  </Tab>
+  <Tab value="Commercial">
+    Based on ecosystem visibility (not a neutral market-share ranking):
+    **Port**, **Cortex**, **OpsLevel**, **Roadie** (Backstage SaaS), plus emerging vendors.
+    — [TFIR survey context](https://tfir.io/survey-understanding-backstage-and-internal-developer-portals-in-2025)
 
-**Backstage** is the dominant open-source framework for internal developer portals.
-— [Port 2024 PDF](https://info.getport.io/hubfs/2024%20state%20of%20internal%20developer%20portals_edited.pdf)
-
-### Commercial
-
-Based on ecosystem visibility (not a neutral market-share ranking):
-**Port**, **Cortex**, **OpsLevel**, **Roadie** (Backstage SaaS), plus emerging vendors.
-— [TFIR survey context](https://tfir.io/survey-understanding-backstage-and-internal-developer-portals-in-2025)
-
-A true "most common by market share" list requires paid analyst research. No credible free public market-share table exists.
+    A true "most common by market share" list requires paid analyst research. No credible free public market-share table exists.
+  </Tab>
+</Tabs>
 
 ---
 
@@ -100,12 +105,12 @@ Sources:
 - [Port 2025 report](https://www.port.io/state-of-internal-developer-portals)
 - [DevOps.com summary](https://devops.com/survey-increased-tool-sprawl-saps-developer-productivity/)
 
-### What this means for Orray
-
+<Callout type="info" title="What this means for Orray">
 - **Reduce context switching** — unify discovery + action in a single spatial interface
 - **Make ownership/dependencies obvious** — service maps, blast radius visualization
 - **Shorten the "ask platform team" loop** — guardrailed self-service (I17 runbook actions)
 - **Make metadata trustworthy** — provenance/freshness transparency
+</Callout>
 
 ---
 

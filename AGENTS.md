@@ -5,3 +5,4 @@ The purpose of this file is to describe common mistakes and confusion points tha
 # Workflow
 
 - **After every code change**: Run lint, tests, and CodeRabbit review (`/coderabbit:review`) before considering the task done.
+- For `docs/`: Run `bunx ultracite check` to lint the docs.

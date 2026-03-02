@@ -1,17 +1,23 @@
 ---
 title: Ideas
+description: Feature concepts and design explorations for the Orray platform.
+icon: Lightbulb
 ---
 
 # Ideas
 
-> **Guiding principle**: Is it possible to *not* use a navbar item for this feature?
-> Navbar is acceptable only for "customizing the experience" — but not encouraged.
+<Callout type="info">
+**Guiding principle**: Is it possible to *not* use a navbar item for this feature?
+Navbar is acceptable only for "customizing the experience" — but not encouraged.
+</Callout>
 
 ---
 
 ## I1 — Version Control / Timeline + Relive Event
 
-> **TL;DR**: A floating, draggable timeline that shows system events. Click an event to enter a historical snapshot. Relive mode replays traces step-by-step with animated dots traveling the request path.
+<Callout type="info">
+**TL;DR**: A floating, draggable timeline that shows system events. Click an event to enter a historical snapshot. Relive mode replays traces step-by-step with animated dots traveling the request path.
+</Callout>
 
 A draggable floating timeline panel accessible from a small button at the bottom of the viewport (icon: timeline/clock). Hovering the button expands it into a full timeline bar taking the bottom space. The bar is freely draggable anywhere on the viewport (unconstrained, like a pen-tool bar in note-taking apps). The timeline displays all system events: bugs, deployments, proposals. Hovering the edges of the timeline reveals a "search backwards" affordance; clicking moves the time range. Hovering an event shows a minimal tooltip. Clicking an event transitions the entire canvas into a historical snapshot of that moment — highlighting the event similarly to the tracing layer — and the timeline collapses back to button mode with an exit button beside it. Reopening the timeline while in snapshot mode also shows the exit button. Exiting snapshot mode returns the canvas to "live" state. "Live" replaces "tracing" as the default active layer.
 
@@ -23,7 +29,9 @@ When entering a snapshot for a traceable event (e.g. "place order"), the timelin
 
 ## I2 — Repo Introspection
 
-> **TL;DR**: LLM inspects and understands repo structure, mapping features and connections automatically.
+<Callout type="info">
+**TL;DR**: LLM inspects and understands repo structure, mapping features and connections automatically.
+</Callout>
 
 Using LLM to inspect and understand repo structure, with features and connections.
 
@@ -31,7 +39,9 @@ Using LLM to inspect and understand repo structure, with features and connection
 
 ## I3 — RBAC
 
-> **TL;DR**: Permissions configured through a meta-canvas — platform functions become spatial nodes, teams/roles are listed per-function. No settings tables.
+<Callout type="info">
+**TL;DR**: Permissions configured through a meta-canvas — platform functions become spatial nodes, teams/roles are listed per-function. No settings tables.
+</Callout>
 
 Configuration happens through a **meta-canvas** — a dedicated spatial view that unpacks the platform's own functions into interactive elements. Every controllable surface in the UI becomes a button on this canvas. For example, the three layers from the top-left panel (Live, Building, Platform) each appear as a node; clicking one reveals a list of all teams/roles and their access level for that layer (view, edit, none). Same principle extends to other functions: timeline access, building toolbar actions (add/delete/connect nodes), runbook actions, environment switching, etc.
 
@@ -47,7 +57,9 @@ The meta-canvas approach keeps RBAC consistent with the product's spatial philos
 
 ## I4 — Semantic Zoom
 
-> **TL;DR**: Zoom into a node to reveal its internals — features as sub-nodes, individual Kafka topics between services, etc.
+<Callout type="info">
+**TL;DR**: Zoom into a node to reveal its internals — features as sub-nodes, individual Kafka topics between services, etc.
+</Callout>
 
 Enter the details of a node just by zooming into it. Create a small cue at a certain zoom level to suggest that the node is about to expand, also following the cursor position (two components in the screen, follow the one where the cursor is hovering at, block if none). If continued zooming, the node will expand showing the details. For example showing the features as smaller nodes inside the microservice, or showing the singular kafka topics between two microservices that has more than one.
 
@@ -55,7 +67,9 @@ Enter the details of a node just by zooming into it. Create a small cue at a cer
 
 ## I5 — DevOps View
 
-> **TL;DR**: Full Kubernetes cluster visibility in the Platform layer.
+<Callout type="info">
+**TL;DR**: Full Kubernetes cluster visibility in the Infra layer.
+</Callout>
 
 In the Infra layer, be able to see everything of the cluster, like namespaces, pods, kubelet etc.
 
@@ -63,7 +77,9 @@ In the Infra layer, be able to see everything of the cluster, like namespaces, p
 
 ## I6 — Universal Search
 
-> **TL;DR**: `cmd+k` to search anything across the entire platform.
+<Callout type="info">
+**TL;DR**: `cmd+k` to search anything across the entire platform.
+</Callout>
 
 Self-explanatory. `cmd+k` and be able to search ANYTHING.
 
@@ -71,7 +87,9 @@ Self-explanatory. `cmd+k` and be able to search ANYTHING.
 
 ## I7 — Multi-collaboration
 
-> **TL;DR**: Real-time multi-user canvas editing with integrated chat.
+<Callout type="info">
+**TL;DR**: Real-time multi-user canvas editing with integrated chat.
+</Callout>
 
 Multiple users, collaborating in real-time. Implement a chat feature to facilitate communication and collaboration among team members.
 
@@ -79,7 +97,9 @@ Multiple users, collaborating in real-time. Implement a chat feature to facilita
 
 ## I8 — Env Stacking (Diff between envs)
 
-> **TL;DR**: Environments stacked on the z-axis like glass panes. Scroll to switch, pinch to pull apart. Diff markers highlight what changed. Quick-diff mode overlays all envs simultaneously.
+<Callout type="info">
+**TL;DR**: Environments stacked on the z-axis like glass panes. Scroll to switch, pinch to pull apart. Diff markers highlight what changed. Quick-diff mode overlays all envs simultaneously.
+</Callout>
 
 Components are the same, environments change. The challenge: how to make differences instantly visible without tab-switching or side-by-side layouts that break the spatial mental model.
 
@@ -103,7 +123,9 @@ A toggle that collapses all environments to z=0 simultaneously, overlaying them 
 
 ## I9 — Kargo Plugin
 
-> **TL;DR**: Autopromote or schedule service promotions, useful when inspecting env diffs.
+<Callout type="info">
+**TL;DR**: Autopromote or schedule service promotions, useful when inspecting env diffs.
+</Callout>
 
 Autopromote or schedule autopromotions services, useful when inspecting the diff between envs.
 
@@ -111,7 +133,9 @@ Autopromote or schedule autopromotions services, useful when inspecting the diff
 
 ## I10 — Blast Radius Simulation
 
-> **TL;DR**: Click a node, trigger "what if this dies?" — animated domino-effect cascades through the dependency graph with an impact summary.
+<Callout type="info">
+**TL;DR**: Click a node, trigger "what if this dies?" — animated domino-effect cascades through the dependency graph with an impact summary.
+</Callout>
 
 Click any node and trigger a "what if this dies?" mode. Animated domino-effect cascades through dependent services — edges flash red sequentially following the dependency graph, downstream nodes dim one by one with a staggered delay. A small overlay tallies the blast: "4 services affected, ~12k users impacted." Inverts the typical post-mortem into a pre-mortem tool.
 
@@ -119,7 +143,9 @@ Click any node and trigger a "what if this dies?" mode. Animated domino-effect c
 
 ## I11 — Cost Flow Layer
 
-> **TL;DR**: Edge thickness = dollar cost. Nodes show monthly spend as radial fill. See where the money goes without opening a billing console.
+<Callout type="info">
+**TL;DR**: Edge thickness = dollar cost. Nodes show monthly spend as radial fill. See where the money goes without opening a billing console.
+</Callout>
 
 A fourth layer (or sub-layer of Platform) where edge thickness represents dollar cost. Cloud spend flows visually through the graph like water — thick, bright edges are expensive paths, thin ones are cheap. Nodes show their monthly cost as a radial fill. Immediately answers "where is our money going?" without opening a billing console. Pairs naturally with env diff (I8).
 
@@ -127,7 +153,9 @@ A fourth layer (or sub-layer of Platform) where edge thickness represents dollar
 
 ## I12 — Ambient Sonification
 
-> **TL;DR**: System health mapped to generative audio. Hear degradation before seeing it.
+<Callout type="info">
+**TL;DR**: System health mapped to generative audio. Hear degradation before seeing it.
+</Callout>
 
 Map system health to generative audio. Healthy = low warm drone, degraded = subtle dissonance, critical = percussive alert tones. Each node contributes a voice to the mix based on its metrics. Engineers can "listen" to their system in the background while coding — a degradation in the soundscape triggers attention before any dashboard. Toggle on/off from the header.
 
@@ -135,7 +163,9 @@ Map system health to generative audio. Healthy = low warm drone, degraded = subt
 
 ## I13 — Canvas Annotations / Sketch Layer
 
-> **TL;DR**: Freeform drawing on the canvas (pen, arrows, stickies). Persisted per-layer and per-snapshot. Searchable, timestamped, attributed.
+<Callout type="info">
+**TL;DR**: Freeform drawing on the canvas (pen, arrows, stickies). Persisted per-layer and per-snapshot. Searchable, timestamped, attributed.
+</Callout>
 
 A freeform drawing layer over the canvas — pen strokes, arrows, text boxes, sticky notes. Persisted per-layer and per-snapshot. During incident reviews, draw directly on the affected path. During architecture discussions, sketch proposed changes on top of the live topology. Annotations are first-class objects: searchable, timestamped, attributable to a user.
 
@@ -143,7 +173,9 @@ A freeform drawing layer over the canvas — pen strokes, arrows, text boxes, st
 
 ## I14 — Spatial Bookmarks (Viewpoints)
 
-> **TL;DR**: Save camera + layer + focus + timeline position as a named viewpoint. Jump instantly. Share as deep links.
+<Callout type="info">
+**TL;DR**: Save camera + layer + focus + timeline position as a named viewpoint. Jump instantly. Share as deep links.
+</Callout>
 
 Save the current camera position + layer + focus state + timeline position as a named "viewpoint." Jump between viewpoints instantly. Share them as deep links. Use cases: "Payment debug view" (zoomed into payment cluster, live layer, focus on Payment Service), "Sprint 12 proposals" (building layer, zoomed out, timeline at proposal date). Essentially browser bookmarks for the system's spatial state.
 
@@ -151,7 +183,9 @@ Save the current camera position + layer + focus state + timeline position as a 
 
 ## I15 — AI Narrator (System Storytelling)
 
-> **TL;DR**: LLM watches metrics and generates a running narrative. Click any sentence to navigate to the relevant nodes/edges.
+<Callout type="info">
+**TL;DR**: LLM watches metrics and generates a running narrative. Click any sentence to navigate to the relevant nodes/edges.
+</Callout>
 
 An LLM watches the metric stream and generates a running natural-language narrative in a small aside panel: "Order Service latency spiked 3x following the Payment Service deploy at 14:15. The spike correlates with the new retry policy — see edge Order→Payment for details." Click any sentence and the canvas navigates to the relevant nodes/edges. Turns raw metrics into a readable incident log. Pairs with timeline (I1) and relive mode.
 
@@ -159,7 +193,9 @@ An LLM watches the metric stream and generates a running natural-language narrat
 
 ## I16 — Ownership Territories
 
-> **TL;DR**: Convex hulls colored by team ownership. See boundaries, cross-team dependencies, and orphaned services at a glance.
+<Callout type="info">
+**TL;DR**: Convex hulls colored by team ownership. See boundaries, cross-team dependencies, and orphaned services at a glance.
+</Callout>
 
 Color-fill convex hulls around node clusters by team ownership. The canvas becomes a territory map — you instantly see team boundaries, shared dependencies crossing territory lines, and orphaned services with no owner. Hovering a territory highlights all its edges (internal = solid, cross-team = dashed).
 
@@ -167,7 +203,9 @@ Color-fill convex hulls around node clusters by team ownership. The canvas becom
 
 ## I17 — Runbook Actions (Canvas as Control Plane)
 
-> **TL;DR**: Right-click a node for actions (restart, scale, deploy, rollback). RBAC-gated, blast-radius-aware. The canvas becomes a control surface.
+<Callout type="info">
+**TL;DR**: Right-click a node for actions (restart, scale, deploy, rollback). RBAC-gated, blast-radius-aware. The canvas becomes a control surface.
+</Callout>
 
 Right-click a node → contextual actions: restart pod, scale replicas, toggle feature flag, trigger deploy, rollback. The canvas isn't just a viewer — it's a control surface. Actions are gated by RBAC (I3) and produce timeline events (I1). Confirmation dialogs show blast radius (I10). Collapses the observe→decide→act loop into a single spatial interface.
 
@@ -175,7 +213,9 @@ Right-click a node → contextual actions: restart pod, scale replicas, toggle f
 
 ## I18 — Project List (Canvas of Canvases)
 
-> **TL;DR**: Zoom out past a threshold to see all projects as live-thumbnail tiles. Zoom into any tile to enter that project. Google Maps-style semantic zoom.
+<Callout type="info">
+**TL;DR**: Zoom out past a threshold to see all projects as live-thumbnail tiles. Zoom into any tile to enter that project. Google Maps-style semantic zoom.
+</Callout>
 
 Each project is a canvas. The question: how do you navigate between them?
 
