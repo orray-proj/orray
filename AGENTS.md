@@ -6,3 +6,4 @@ The purpose of this file is to describe common mistakes and confusion points tha
 
 - **After every code change**: Run lint, tests, and CodeRabbit review (`/coderabbit:review`) before considering the task done.
 - For `docs/`: Run `bunx ultracite check` to lint the docs.
+- For `ui/`: Run `cd ui && bun run lint && bun run types:check` to lint and typecheck the UI.

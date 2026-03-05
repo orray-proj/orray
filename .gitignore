@@ -36,3 +36,8 @@ go.work
 
 # Kubeconfig might contain secrets
 *.kubeconfig
+
+# UI
+ui/node_modules/
+ui/dist/
+*.tsbuildinfo
