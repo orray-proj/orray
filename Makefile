@@ -69,6 +69,32 @@ lint-fix: ## Run golangci-lint linter and perform fixes
 lint-config: ## Verify golangci-lint linter configuration
 	$(GOLANGCI_LINT) config verify
 
+##@ UI
+
+.PHONY: ui-install
+ui-install: ## Install UI dependencies
+	cd ui && bun install
+
+.PHONY: ui-dev
+ui-dev: ## Start UI dev server
+	cd ui && bun run dev
+
+.PHONY: ui-build
+ui-build: ui-install ## Build UI static assets
+	cd ui && bun run build
+
+.PHONY: ui-lint
+ui-lint: ## Lint UI code
+	cd ui && bun run lint
+
+.PHONY: ui-types
+ui-types: ## Type-check UI code
+	cd ui && bun run types:check
+
+.PHONY: ui-test
+ui-test: ## Run UI tests
+	cd ui && bun run test
+
 ##@ Build
 
 .PHONY: build

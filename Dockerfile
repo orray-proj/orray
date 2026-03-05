@@ -1,4 +1,15 @@
 ####################################################################################################
+# front-end-builder
+####################################################################################################
+FROM --platform=$BUILDPLATFORM oven/bun:latest AS front-end-builder
+
+WORKDIR /ui
+COPY ui/package.json ui/bun.lock* ./
+RUN bun install --frozen-lockfile
+COPY ui/ .
+RUN bun run build
+
+####################################################################################################
 # back-end-builder
 ####################################################################################################
 FROM --platform=$BUILDPLATFORM golang:1.25.5-bookworm AS back-end-builder
@@ -16,6 +27,7 @@ RUN go mod download
 COPY api/ api/
 COPY cmd/ cmd/
 COPY pkg/ pkg/
+COPY --from=front-end-builder /ui/dist/ pkg/ui/dist/
 
 ARG VERSION
 ARG GIT_COMMIT
