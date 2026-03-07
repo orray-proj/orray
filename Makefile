@@ -95,6 +95,24 @@ ui-types: ## Type-check UI code
 ui-test: ## Run UI tests
 	cd ui && bun run test
 
+##@ Docs
+
+.PHONY: docs-install
+docs-install: ## Install docs dependencies
+	cd docs && bun install
+
+.PHONY: docs-dev
+docs-dev: ## Start docs dev server
+	cd docs && bun run dev
+
+.PHONY: docs-build
+docs-build: docs-install ## Build docs site
+	cd docs && bun run build
+
+.PHONY: docs-lint
+docs-lint: ## Lint docs
+	cd docs && bunx ultracite check
+
 ##@ Build
 
 .PHONY: build

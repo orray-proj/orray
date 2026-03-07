@@ -1,11 +1,13 @@
 # Docs
 
-Next.js documentation site. Uses `bun` as package manager.
+Next.js documentation site (Fumadocs). Uses `bun` as package manager.
 
-## Lint
+## Commands
 
 ```bash
-bunx ultracite check
+make docs-dev    # dev server
+make docs-build  # production build
+make docs-lint   # ultracite check
 ```
 
-Run from the `docs/` directory before considering any docs change done.
+Run `make docs-lint` before considering any docs change done.
