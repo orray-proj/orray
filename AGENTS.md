@@ -1,9 +1,19 @@
-# Agent file
+# Orray
 
-The purpose of this file is to describe common mistakes and confusion points that agents might encounter as they work in this project. If you ever encounter something in the project that surprises you, please alert the developer working with you and indicate that this is the case to write it in this file to help prevent future agents from having the same issue.
+Kubernetes controller (Go) with a React SPA frontend (`ui/`) and Next.js docs site (`docs/`).
 
-# Workflow
+## Package managers
+
+- **Go backend**: `go` (with `make` targets)
+- **JS (ui, docs)**: `bun`
+
+## Workflow
 
 - **After every code change**: Run lint, tests, and CodeRabbit review (`/coderabbit:review`) before considering the task done.
-- For `docs/`: Run `bunx ultracite check` to lint the docs.
-- For `ui/`: Run `cd ui && bun run lint && bun run types:check` to lint and typecheck the UI.
+- **Backend**: `make lint && make test`
+- **UI**: See [`ui/CLAUDE.md`](ui/CLAUDE.md)
+- **Docs**: See [`docs/CLAUDE.md`](docs/CLAUDE.md)
+
+## currentDate
+
+Today's date is 2026-03-07.
