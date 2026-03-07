@@ -14,6 +14,10 @@ Kubernetes controller (Go) with a React SPA frontend (`ui/`) and Next.js docs si
 - **UI**: See [`ui/CLAUDE.md`](ui/CLAUDE.md)
 - **Docs**: See [`docs/CLAUDE.md`](docs/CLAUDE.md)
 
+## Internal docs
+
+All internal documentation lives in Notion. Use the Notion MCP tools to search and read it.
+
 ## currentDate
 
 Today's date is 2026-03-07.
