@@ -3,11 +3,11 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: orray
-  annotations:
-    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/orray-webhooks-server
   labels:
     {{- include "orray.labels" . | nindent 4 }}
     {{- include "orray.webhooksServer.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/orray-webhooks-server
 webhooks:
 - name: canvas.orray.dev
   admissionReviewVersions: ["v1"]

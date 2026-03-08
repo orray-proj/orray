@@ -14,3 +14,5 @@ subjects:
 - kind: ServiceAccount
   namespace: {{ .Release.Namespace }}
   name: orray-controller
+
+{{- end }}
