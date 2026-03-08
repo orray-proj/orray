@@ -13,8 +13,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
+	"github.com/orray-proj/orray/api/v1alpha1"
 	"github.com/orray-proj/orray/pkg/kubernetes"
 	versionpkg "github.com/orray-proj/orray/pkg/version"
+	"github.com/orray-proj/orray/pkg/webhook/canvas"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -67,6 +69,12 @@ func (k *kubernetesWebhooksServer) run(ctx context.Context) error {
 	if err = authzv1.AddToScheme(scheme); err != nil {
 		return fmt.Errorf("add authzv1 to scheme: %w", err)
 	}
+	if err = v1alpha1.AddToScheme(scheme); err != nil {
+		return fmt.Errorf(
+			"error adding orray v1alpha1 API to controller manager scheme: %w",
+			err,
+		)
+	}
 
 	mgr, err := ctrl.NewManager(restCfg, ctrl.Options{
 		Scheme: scheme,
@@ -91,10 +99,10 @@ func (k *kubernetesWebhooksServer) run(ctx context.Context) error {
 		return err
 	}
 
-	// indexer := indexer.NewWebhooksServer(mgr)
-	// if err := indexer.Index(ctx); err != nil {
-	// 	return fmt.Errorf("error indexing webhooks server: %w", err)
-	// }
+	// Register Canvas Webhook
+	if err := canvas.NewCanvasWebhook(k.Logger).SetupWebhookWithManager(mgr); err != nil {
+		return fmt.Errorf("failed to setup canvas webhook: %w", err)
+	}
 
 	return k.startWebhooksServer(ctx, mgr)
 }
