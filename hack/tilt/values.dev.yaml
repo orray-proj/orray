@@ -1,0 +1,8 @@
+crds:
+  install: true
+
+controller:
+  logLevel: DEBUG
+
+webhooksServer:
+  logLevel: DEBUG

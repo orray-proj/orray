@@ -11,6 +11,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 
+	"github.com/orray-proj/orray/api/v1alpha1"
+	"github.com/orray-proj/orray/pkg/controller/canvas"
 	"github.com/orray-proj/orray/pkg/kubernetes"
 	versionpkg "github.com/orray-proj/orray/pkg/version"
 	"github.com/spf13/cobra"
@@ -21,13 +23,12 @@ import (
 )
 
 type controller struct {
-	baseComponent
+	*baseComponent
 }
 
 func newControllerCommand() *cobra.Command {
-	ctrl := &controller{}
-	if err := ctrl.Bootstrap(); err != nil {
-		panic(err)
+	ctrl := &controller{
+		baseComponent: newBaseComponent(),
 	}
 
 	cmd := &cobra.Command{
@@ -60,7 +61,14 @@ func (c *controller) run(ctx context.Context) error {
 		return fmt.Errorf("failed to setup orray controller manager: %w", err)
 	}
 
-	// TODO: setup reconcilers
+	// Register Canvas Reconciler
+	if err = (&canvas.Reconciler{
+		Client: mgr.GetClient(),
+		Logger: c.Logger,
+	}).SetupWithManager(mgr); err != nil {
+		return fmt.Errorf("failed to setup canvas reconciler: %w", err)
+	}
+
 	return startControllerManager(ctx, mgr)
 }
 
@@ -95,6 +103,13 @@ func (c *controller) setupControllerManager(_ context.Context) (manager.Manager,
 		)
 	}
 
+	if err = v1alpha1.AddToScheme(scheme); err != nil {
+		return nil, fmt.Errorf(
+			"error adding orray v1alpha1 API to controller manager scheme: %w",
+			err,
+		)
+	}
+
 	mgr, err := ctrl.NewManager(restCfg, ctrl.Options{
 		Scheme: scheme,
 		Metrics: server.Options{
@@ -108,7 +123,7 @@ func (c *controller) setupControllerManager(_ context.Context) (manager.Manager,
 		},
 		// Add leader election configuration
 		LeaderElection:          true,
-		LeaderElectionNamespace: "orray-system",
+		LeaderElectionNamespace: "orray",
 		LeaderElectionID:        "orray-controller",
 	})
 	if err != nil {

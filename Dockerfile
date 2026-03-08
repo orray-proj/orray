@@ -57,12 +57,29 @@ ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/usr/local/bin/orray"]
 
 ####################################################################################################
+# ui-dev
+# - includes UI dev dependencies
+# - runs with vite
+# - supports development
+# - not used for official image builds
+####################################################################################################
+FROM --platform=$BUILDPLATFORM oven/bun:latest AS ui-dev
+
+WORKDIR /ui
+COPY ["ui/package.json", "ui/bun.lock", "./"]
+
+RUN bun install
+
+COPY ["ui/", "."]
+
+CMD ["bun", "run", "dev"]
+
+####################################################################################################
 # final
 # - the official image we publish
 # - purposefully last so that it is the default target when building
 ####################################################################################################
 FROM alpine:latest AS final
-
 
 RUN apk update && apk add ca-certificates git gpg gpg-agent openssh-client tini
 

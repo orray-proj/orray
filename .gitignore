@@ -6,6 +6,9 @@ devenv.local.yaml
 # direnv
 .direnv
 
+ui/dist
+pkg/ui/dist
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

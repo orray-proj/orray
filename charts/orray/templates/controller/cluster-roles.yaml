@@ -50,6 +50,18 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - orray.dev
+  resources:
+  - canvas
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 {{- if .Values.controller.serviceAccount.clusterWideSecretReadingEnabled }}
 - apiGroups:
   - ""
@@ -59,4 +71,5 @@ rules:
   - get
   - list
   - watch
+{{- end }}
 {{- end }}

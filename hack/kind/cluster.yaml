@@ -1,0 +1,12 @@
+apiVersion: ctlptl.dev/v1alpha1
+kind: Cluster
+name: kind-orray-dev-cluster
+product: kind
+registry: orray-dev-registry
+kindV1Alpha4Cluster:
+  nodes:
+  - extraPortMappings:
+    - containerPort: 30081 # Orray API server
+      hostPort: 30081
+    - containerPort: 30082 # Orray API server proxy
+      hostPort: 30082

@@ -11,8 +11,17 @@ type baseComponent struct {
 	*internalServer.Config
 }
 
+// newBaseComponent creates a new base component for the controlplane
+func newBaseComponent() *baseComponent {
+	base := new(baseComponent)
+	if err := base.bootstrap(); err != nil {
+		panic(err)
+	}
+	return base
+}
+
 // Bootstrap initialized the component with server configuration
-func (b *baseComponent) Bootstrap() error {
+func (b *baseComponent) bootstrap() error {
 	cfg := &internalServer.Config{}
 	if err := internalServer.NewConfig(cfg); err != nil {
 		return err
