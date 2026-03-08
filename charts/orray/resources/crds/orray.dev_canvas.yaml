@@ -4,14 +4,14 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.20.1
-  name: projects.orray.dev
+  name: canvas.orray.dev
 spec:
   group: orray.dev
   names:
-    kind: Project
-    listKind: ProjectList
-    plural: projects
-    singular: project
+    kind: Canvas
+    listKind: CanvasList
+    plural: canvas
+    singular: canvas
   scope: Cluster
   versions:
   - additionalPrinterColumns:
@@ -27,7 +27,7 @@ spec:
     name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Project is a resource type that describes a Project.
+        description: Canvas is a resource type that describes a Canvas.
         properties:
           apiVersion:
             description: |-
@@ -47,14 +47,17 @@ spec:
           metadata:
             type: object
           spec:
-            description: Spec describes the Project.
+            description: Spec describes the Canvas.
+            properties:
+              displayName:
+                type: string
             type: object
           status:
-            description: Status describes the current status of a Project.
+            description: Status describes the current status of a Canvas.
             properties:
               conditions:
                 description: |-
-                  Conditions contains the last observations of the Project's current
+                  Conditions contains the last observations of the Canvas's current
                   state.
                 items:
                   description: Condition contains details for one aspect of the current
