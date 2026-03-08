@@ -1,0 +1,30 @@
+{{- if .Values.webhooksServer.enabled }}
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: orray
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/orray-webhooks-server
+  labels:
+    {{- include "orray.labels" . | nindent 4 }}
+    {{- include "orray.webhooksServer.labels" . | nindent 4 }}
+webhooks:
+- name: canvas.orray.dev
+  admissionReviewVersions: ["v1"]
+  sideEffects: NoneOnDryRun
+  clientConfig:
+    service:
+      namespace: {{ .Release.Namespace }}
+      name: orray-webhooks-server
+      path: /validate-orray-dev-v1alpha1-canvas
+    {{- if and (not .Values.webhooksServer.tls.selfSignedCert) .Values.webhooksServer.tls.caBundle }}
+    caBundle: {{ .Values.webhooksServer.tls.caBundle | b64enc }}
+    {{- end }}
+  rules:
+  - scope: Cluster
+    apiGroups: ["orray.dev"]
+    apiVersions: ["v1alpha1"]
+    resources: ["canvas"]
+    operations: ["CREATE", "UPDATE"]
+  failurePolicy: Fail
+{{- end }}
