@@ -4,6 +4,7 @@
     "coderabbit@claude-plugins-official": true,
     "github@claude-plugins-official": true,
     "frontend-design@claude-code-plugins": true,
-    "Notion@claude-plugins-official": true
+    "Notion@claude-plugins-official": true,
+    "figma@claude-plugins-official": true
   }
 }
