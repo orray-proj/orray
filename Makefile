@@ -55,7 +55,7 @@ vet: ## Run go vet against code.
 
 .PHONY: test
 test: manifests generate fmt vet ## Run tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(KUBERNETES_VERSION) -p path)" go test $$(go list ./... | grep -v /e2e | grep -v /api | grep -v /cmd) -coverprofile cover.out
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(KUBERNETES_VERSION) -p path)" go test $$(go list ./... | grep -v /api | grep -v /cmd) -coverprofile cover.out
 
 .PHONY: lint
 lint: ## Run golangci-lint linter
@@ -82,6 +82,8 @@ ui-dev: ## Start UI dev server
 .PHONY: ui-build
 ui-build: ui-install ## Build UI static assets
 	cd ui && bun run build
+	rm -rf pkg/ui/dist
+	cp -r ui/dist pkg/ui/dist
 
 .PHONY: ui-lint
 ui-lint: ## Lint UI code
@@ -108,19 +110,11 @@ build-image: ## Build the image
 		--build-arg GIT_COMMIT=1234567890 \
 		--build-arg GIT_TREE_STATE=dirty \
 		--build-arg TARGETARCH=amd64 \
-		.
-
-##@ Test
-
-.PHONY: test-kuttl
-test-kuttl: build-image ## Run KUTTL tests
-	cd tests && kubectl kuttl test --config kuttl-test.yaml
 
 ##@ Hack
 .PHONY: hack-kind-up
 hack-kind-up:
 	$(CTLPTL) apply -f hack/kind/cluster.yaml
-	make hack-install-prereqs
 
 .PHONY: hack-kind-down
 hack-kind-down:
