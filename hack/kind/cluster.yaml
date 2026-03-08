@@ -1,8 +1,8 @@
 apiVersion: ctlptl.dev/v1alpha1
 kind: Cluster
-name: kind-kargo-dev-cluster
+name: kind-orray-dev-cluster
 product: kind
-registry: kargo-dev-registry
+registry: orray-dev-registry
 kindV1Alpha4Cluster:
   nodes:
   - extraPortMappings:

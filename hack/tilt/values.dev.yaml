@@ -4,13 +4,5 @@ crds:
 controller:
   logLevel: DEBUG
 
-externalWebhooksServer:
-  logLevel: DEBUG
-  host: localhost:30083
-  tls:
-    enabled: false
-  probes:
-    enabled: false
-
 webhooksServer:
   logLevel: DEBUG

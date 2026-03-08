@@ -17,6 +17,7 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
+    port: 3333,
   },
   build: {
     rollupOptions: {

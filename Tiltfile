@@ -67,11 +67,11 @@ k8s_resource(
   new_name = 'common',
   labels = ['orray'],
   objects = [
-    'orray-admin:clusterrole',
-    'orray-admin:clusterrolebinding',
-    'orray-admin:role',
-    'orray-admin:rolebinding',
-    'orray-admin:serviceaccount',
+    # 'orray-admin:clusterrole',
+    # 'orray-admin:clusterrolebinding',
+    # 'orray-admin:role',
+    # 'orray-admin:rolebinding',
+    # 'orray-admin:serviceaccount',
     'orray-selfsigned-cert-issuer:issuer'
   ],
   resource_deps = ['ensure-cert-manager']
@@ -106,7 +106,7 @@ k8s_resource(
     'orray-controller:configmap',
     'orray-controller:serviceaccount'
   ],
-  resource_deps=['back-end-compile', 'credential-helper-compile', ]
+  resource_deps=['back-end-compile', ]
 )
 
 k8s_resource(

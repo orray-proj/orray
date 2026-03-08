@@ -4,7 +4,7 @@ CONTROLLER_GEN ?= go tool sigs.k8s.io/controller-tools/cmd/controller-gen
 ENVTEST ?= go tool sigs.k8s.io/controller-runtime/tools/setup-envtest
 KUSTOMIZE ?= go tool sigs.k8s.io/kustomize/kustomize/v5
 GOLANGCI_LINT = go tool github.com/golangci/golangci-lint/cmd/golangci-lint
-CTLPTL ?= ./bin/ctlptl
+CTLPTL ?= go tool github.com/tilt-dev/ctlptl/cmd/ctlptl
 
 KUBERNETES_VERSION ?= 1.34.0
 CERT_MANAGER_CHART_VERSION 	:= 1.16.1
