@@ -23,13 +23,12 @@ import (
 )
 
 type controller struct {
-	baseComponent
+	*baseComponent
 }
 
 func newControllerCommand() *cobra.Command {
-	ctrl := &controller{}
-	if err := ctrl.Bootstrap(); err != nil {
-		panic(err)
+	ctrl := &controller{
+		baseComponent: newBaseComponent(),
 	}
 
 	cmd := &cobra.Command{
@@ -124,7 +123,7 @@ func (c *controller) setupControllerManager(_ context.Context) (manager.Manager,
 		},
 		// Add leader election configuration
 		LeaderElection:          true,
-		LeaderElectionNamespace: "orray-system",
+		LeaderElectionNamespace: "orray",
 		LeaderElectionID:        "orray-controller",
 	})
 	if err != nil {

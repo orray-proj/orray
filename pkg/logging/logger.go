@@ -19,6 +19,23 @@ type (
 	Format string
 )
 
+func (l *Level) UnmarshalText(text []byte) error {
+	var zl zapcore.Level
+	if err := zl.UnmarshalText(text); err != nil {
+		return err
+	}
+	*l = Level(zl)
+	return nil
+}
+
+func (l Level) MarshalText() ([]byte, error) {
+	return zapcore.Level(l).MarshalText()
+}
+
+func (l Level) String() string {
+	return zapcore.Level(l).String()
+}
+
 const (
 	ErrorLevel Level = Level(zapcore.ErrorLevel)
 	WarnLevel  Level = Level(zapcore.WarnLevel)

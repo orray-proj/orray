@@ -11,7 +11,7 @@ import (
 // Config is the configuration for the logging package.
 type Config struct {
 	// Level is the level of the logger.
-	Level  Level  `env:"LOG_LEVEL"  validate:"oneof=DEBUG INFO WARN ERROR" default:"INFO"`
+	Level  Level  `env:"LOG_LEVEL"  default:"INFO"`
 	Format Format `env:"LOG_FORMAT" validate:"oneof=console json" default:"console"`
 }
 

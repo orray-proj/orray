@@ -26,9 +26,8 @@ type kubernetesWebhooksServer struct {
 }
 
 func newKubernetesWebhooksServerCommand() *cobra.Command {
-	server := &kubernetesWebhooksServer{}
-	if err := server.Bootstrap(); err != nil {
-		panic(err)
+	server := &kubernetesWebhooksServer{
+		baseComponent: newBaseComponent(),
 	}
 
 	cmd := &cobra.Command{
