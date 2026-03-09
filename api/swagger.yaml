@@ -1,0 +1,28 @@
+basePath: /api
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is the Orray API server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Orray API
+  version: "1.0"
+paths:
+  /v1alpha1/hello:
+    get:
+      consumes:
+      - application/json
+      description: Hello
+      operationId: hello_v1alpha1
+      produces:
+      - application/json
+      responses: {}
+      summary: Say Hello v1alpha1
+      tags:
+      - Hello
+swagger: "2.0"
