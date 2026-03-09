@@ -77,24 +77,23 @@ k8s_resource(
   resource_deps = ['ensure-cert-manager']
 )
 
-# k8s_resource(
-#   workload = 'orray-api',
-#   new_name = 'api',
-#   port_forwards = [
-#     '30081:8080'
-#   ],
-#   labels = ['orray'],
-#   objects = [
-#     'orray-api:clusterrole',
-#     'orray-api:clusterrolebinding',
-#     'orray-api:configmap',
-#     'orray-api:role',
-#     'orray-api:rolebinding',
-#     'orray-api:secret',
-#     'orray-api:serviceaccount'
-#   ],
-#   resource_deps=['back-end-compile']
-# )
+k8s_resource(
+  workload = 'orray-apiserver',
+  new_name = 'api',
+  port_forwards = [
+    '30081:8080'
+  ],
+  labels = ['orray'],
+  objects = [
+    'orray-apiserver:clusterrole',
+    'orray-apiserver:clusterrolebinding',
+    'orray-apiserver:configmap',
+    'orray-apiserver:role',
+    'orray-apiserver:rolebinding',
+    'orray-apiserver:serviceaccount'
+  ],
+  resource_deps=['back-end-compile']
+)
 
 k8s_resource(
   workload = 'orray-controller',

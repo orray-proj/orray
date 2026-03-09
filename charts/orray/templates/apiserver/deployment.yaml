@@ -1,0 +1,105 @@
+{{- if .Values.apiserver.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orray-apiserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "orray.labels" . | nindent 4 }}
+    {{- include "orray.apiserver.labels" . | nindent 4 }}
+  {{- with (mergeOverwrite (deepCopy .Values.global.labels) .Values.apiserver.labels) }}
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with (mergeOverwrite (deepCopy .Values.global.annotations) .Values.apiserver.annotations) }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "orray.selectorLabels" . | nindent 6 }}
+      {{- include "orray.apiserver.labels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        configmap/checksum: {{ pick ( include (print $.Template.BasePath "/apiserver/configmap.yaml") . | fromYaml ) "data" | toYaml | sha256sum }}
+      {{- with (mergeOverwrite (deepCopy .Values.global.podAnnotations) .Values.apiserver.podAnnotations) }}
+        {{- range $key, $value := . }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      labels:
+        {{- include "orray.labels" . | nindent 8 }}
+        {{- include "orray.apiserver.labels" . | nindent 8 }}
+      {{- with (mergeOverwrite (deepCopy .Values.global.podLabels) .Values.apiserver.podLabels) }}
+        {{- range $key, $value := . }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+    spec:
+      serviceAccountName: "orray-apiserver"
+      {{- with .Values.apiserver.affinity | default .Values.global.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: apiserver
+        image: "{{ include "orray.image" . }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/sbin/tini", "--", "/usr/local/bin/orray"]
+        args: ["apiserver"]
+        env:
+        - name: GOMEMLIMIT
+          valueFrom:
+            resourceFieldRef:
+              containerName: apiserver
+              divisor: "1"
+              resource: limits.memory
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              containerName: apiserver
+              divisor: "1"
+              resource: limits.cpu
+        {{- with (concat .Values.global.env .Values.apiserver.env) }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        envFrom:
+        - configMapRef:
+            name: orray-apiserver
+        {{- with (concat .Values.global.envFrom .Values.apiserver.envFrom) }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp-data
+        {{- with .Values.apiserver.securityContext | default .Values.global.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        resources:
+          {{- toYaml .Values.apiserver.resources | nindent 10 }}
+
+      volumes:
+      - name: tmp-data
+        emptyDir: {}
+      {{- with .Values.apiserver.nodeSelector | default .Values.global.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.apiserver.tolerations | default .Values.global.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
