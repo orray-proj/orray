@@ -18,5 +18,6 @@ var rootCmd = &cobra.Command{
 func Execute(ctx context.Context) error {
 	rootCmd.AddCommand(newControllerCommand())
 	rootCmd.AddCommand(newKubernetesWebhooksServerCommand())
+	rootCmd.AddCommand(newAPIServerCommand())
 	return rootCmd.ExecuteContext(ctx)
 }
