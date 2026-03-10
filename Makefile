@@ -5,6 +5,7 @@ ENVTEST ?= go tool sigs.k8s.io/controller-runtime/tools/setup-envtest
 KUSTOMIZE ?= go tool sigs.k8s.io/kustomize/kustomize/v5
 GOLANGCI_LINT = go tool github.com/golangci/golangci-lint/cmd/golangci-lint
 CTLPTL ?= go tool github.com/tilt-dev/ctlptl/cmd/ctlptl
+SWAG ?= go run github.com/swaggo/swag/cmd/swag
 
 KUBERNETES_VERSION ?= 1.34.0
 CERT_MANAGER_CHART_VERSION 	:= 1.16.1
@@ -37,8 +38,23 @@ manifests: ## Generate CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/orray/resources/crds
 
 .PHONY: generate
-generate: ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
+generate: codegen-opanapi codegen-docs ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
+
+.PHONY: codegen-opanapi
+codegen-opanapi:
+	rm -f api/swagger.yaml api/swagger.json
+	rm -rf /tmp/swagger-build
+	mkdir -p /tmp/swagger-build
+	$(SWAG) init \
+	    --generalInfo pkg/rest/router.go \
+		--output /tmp/swagger-build \
+		--parseDependency \
+		--parseInternal \
+		--outputTypes yaml,json
+	mv /tmp/swagger-build/swagger.yaml api/
+	mv /tmp/swagger-build/swagger.json api/
+	rm -rf /tmp/swagger-build
 
 .PHONY: codegen-docs
 codegen-docs:

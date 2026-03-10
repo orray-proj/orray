@@ -45,4 +45,16 @@ rules:
   - subjectaccessreviews
   verbs:
   - create
+- apiGroups:
+  - orray.dev
+  resources:
+  - canvases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 {{- end }}

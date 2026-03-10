@@ -16,6 +16,7 @@ pkg/ui/dist
 *.so
 *.dylib
 bin/*
+bin
 Dockerfile.cross
 
 # Test binary, built with `go test -c`

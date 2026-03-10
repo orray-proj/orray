@@ -66,6 +66,10 @@ app.kubernetes.io/component: controller
 app.kubernetes.io/component: webhooks-server
 {{- end -}}
 
+{{- define "orray.apiserver.labels" -}}
+app.kubernetes.io/component: apiserver
+{{- end -}}
+
 {{/*
 Create the name of the service account to use
 */}}

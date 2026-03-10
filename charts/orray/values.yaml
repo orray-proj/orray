@@ -112,6 +112,64 @@ rbac:
   ## @param rbac.installClusterRoleBindings Indicates if `ClusterRoleBindings` should be installed.
   installClusterRoleBindings: true
 
+## @section API Server
+## All settings for the api server component
+apiserver:
+  ## @param apiserver.enabled Whether the apiserver is enabled.
+  enabled: true
+
+  ## @param apiserver.labels Labels to add to the api resources. Merges with `global.labels`, allowing you to override or add to the global labels.
+  labels: {}
+  ## @param apiserver.annotations Annotations to add to the api resources. Merges with `global.annotations`, allowing you to override or add to the global annotations.
+  annotations: {}
+  ## @param apiserver.podLabels Optional labels to add to pods. Merges with `global.podLabels`, allowing you to override or add to the global labels.
+  podLabels: {}
+  ## @param apiserver.podAnnotations Optional annotations to add to pods. Merges with `global.podAnnotations`, allowing you to override or add to the global annotations.
+  podAnnotations: {}
+
+  ## All settings relating to the service account for the apiserver
+  serviceAccount:
+    ## @param apiserver.serviceAccount.clusterWideSecretReadingEnabled Specifies whether the apiserver's ServiceAccount should be granted read permissions to Secrets CLUSTER-WIDE in the orray control plane's cluster.
+    clusterWideSecretReadingEnabled: true
+  ## Reconciler-specific settings
+  reconcilers:
+    ## @param apiserver.reconcilers.maxConcurrentReconciles specifies the maximum number of resources EACH of the apiserver's reconcilers can reconcile concurrently. This setting may also be overridden on a per-reconciler basis.
+    maxConcurrentReconciles: 4
+
+  ## @param apiserver.securityContext Security context for apiserver pods. Defaults to `global.securityContext`.
+  securityContext: {}
+
+  ## @param apiserver.logLevel The log level for the apiserver.
+  logLevel: INFO
+
+  ## @param apiserver.logFormat The log format for the apiserver. Available options: console, json. Defaults to 'console'.
+  logFormat: console
+
+  ## @param apiserver.resources Resources limits and requests for the apiserver containers.
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  ## @param apiserver.nodeSelector Node selector for apiserver pods. Defaults to `global.nodeSelector`.
+  nodeSelector: {}
+  ## @param apiserver.tolerations Tolerations for apiserver pods. Defaults to `global.tolerations`.
+  tolerations: []
+  ## @param apiserver.affinity Specifies pod affinity for apiserver pods. Defaults to `global.affinity`.
+  affinity: {}
+  ## @param apiserver.env Environment variables to add to apiserver pods.
+  env: []
+  #  - name: ENV_NAME
+  #    value: value
+  ## @param apiserver.envFrom Environment variables to add to apiserver pods from ConfigMaps or Secrets.
+  envFrom: []
+  #  - configMapRef:
+  #      name: config-map-name
+  #  - secretRef:
+  #      name: secret-name
+
 ## @section Webhooks
 webhooks:
   ## @param webhooks.register Whether to create `ValidatingWebhookConfiguration` and `MutatingWebhookConfiguration` resources.
@@ -140,7 +198,7 @@ webhooksServer:
   ## @param webhooksServer.resources Resources limits and requests for the webhooks server containers.
 
   tls:
-    ## @param webhooksServer.tls.selfSignedCert  Whether to generate a self-signed certificate for the controller's built-in webhook server. If `true`, `cert-manager` CRDs **must** be present in the cluster. Orray will create and use its own namespaced issuer. If `false`, a cert secret named `orray-webhooks-server-cert` **must** be provided in the same namespace as Orray. There is no provision for webhooks without TLS.
+    ## @param webhooksServer.tls.selfSignedCert  Whether to generate a self-signed certificate for the webhooks servers's built-in webhook server. If `true`, `cert-manager` CRDs **must** be present in the cluster. Orray will create and use its own namespaced issuer. If `false`, a cert secret named `orray-webhooks-server-cert` **must** be provided in the same namespace as Orray. There is no provision for webhooks without TLS.
     selfSignedCert: true
     ## @param webhooksServer.tls.secretName Name of the cert `Secret` for use with the (internal) webhooks server. When `webhooksServer.tls.selfSignedCert` is `true`, this will be the name of the generated cert `Secret`. When `webhooksServer.tls.selfSignedCert` is `false`, a cert `Secret` with this name **must** be provided in the same namespace as Orray. There is no provision for running the webhooks server without TLS because the Kubernetes API server will not communicate with non TLS-endpoints.
     secretName: orray-webhooks-server-cert

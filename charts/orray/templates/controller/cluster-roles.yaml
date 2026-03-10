@@ -53,7 +53,7 @@ rules:
 - apiGroups:
   - orray.dev
   resources:
-  - canvas
+  - canvases
   verbs:
   - create
   - delete
