@@ -24,9 +24,10 @@ func (s *Server) setupRESTRouter() {
 	router := gin.Default()
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	v1alpha1 := router.Group("/v1alpha1")
+	api := router.Group("/api")
+	v1alpha1 := api.Group("/v1alpha1")
 	{
-		v1alpha1.GET("/hello", s.hellov1alpha1)
+		v1alpha1.GET("/canvases", s.listCanvasesV1alpha1)
 	}
 
 	s.router = router

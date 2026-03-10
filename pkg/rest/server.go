@@ -15,18 +15,19 @@ import (
 
 // Config extends the base server config with REST-specific options.
 type Config struct {
-	server.Config `env:",init"`
+	server.Config
 
 	BindAddress string `env:"REST_BIND_ADDRESS" envDefault:":8080"`
 	Mode        string `env:"REST_MODE" envDefault:"release"`
 }
 
-func NewConfig(cfg *Config) error {
+// NewConfig create a new config for a rest server
+func NewConfig(cfg *Config, serverConfig server.Config) error {
+	cfg.Config = serverConfig
 	if err := env.Parse(cfg); err != nil {
 		return fmt.Errorf("failed to parse rest config: %w", err)
 	}
 	return nil
-
 }
 
 // Server is the REST API server.

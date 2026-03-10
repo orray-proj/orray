@@ -60,7 +60,7 @@ func (s *apiServer) run(ctx context.Context) error {
 	}
 
 	cfg := new(rest.Config)
-	if err := rest.NewConfig(cfg); err != nil {
+	if err := rest.NewConfig(cfg, *s.Config); err != nil {
 		return err
 	}
 	server := rest.NewServer(ctx, cfg, s.Logger, kubeClient, clientset)

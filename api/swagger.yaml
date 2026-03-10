@@ -13,16 +13,14 @@ info:
   title: Orray API
   version: "1.0"
 paths:
-  /v1alpha1/hello:
+  /v1alpha1/canvases:
     get:
-      consumes:
-      - application/json
-      description: Hello
-      operationId: hello_v1alpha1
+      description: List all the canvases the user has access to
+      operationId: ListCanvasesV1alpha1
       produces:
       - application/json
       responses: {}
-      summary: Say Hello v1alpha1
+      summary: List all canvases
       tags:
-      - Hello
+      - Canvas
 swagger: "2.0"

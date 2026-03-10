@@ -88,8 +88,6 @@ k8s_resource(
     'orray-apiserver:clusterrole',
     'orray-apiserver:clusterrolebinding',
     'orray-apiserver:configmap',
-    'orray-apiserver:role',
-    'orray-apiserver:rolebinding',
     'orray-apiserver:serviceaccount'
   ],
   resource_deps=['back-end-compile']
@@ -120,7 +118,7 @@ k8s_resource(
 
 k8s_resource(
   workload = 'orray-webhooks-server',
-  new_name = 'kubernetes-webhooks-server',
+  new_name = 'webhooks-server',
   labels = ['orray'],
   objects = [
     'orray:validatingwebhookconfiguration',
@@ -136,7 +134,7 @@ k8s_resource(
 k8s_resource(
   new_name = 'crds',
   objects = [
-    'canvas.orray.dev:customresourcedefinition',
+    'canvases.orray.dev:customresourcedefinition',
   ],
   labels = ['orray']
 )
