@@ -1,11 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "root": false,
   "extends": ["ultracite/core", "ultracite/react", "ultracite/next"],
-  "vcs": {
-    "enabled": true,
-    "clientKind": "git",
-    "useIgnoreFile": true
-  },
   "files": {
     "includes": ["!.source"]
   }

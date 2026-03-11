@@ -29,7 +29,7 @@ func Handler() http.Handler {
 
 		// Check if the file exists
 		if f, err := dist.Open(path); err == nil {
-			f.Close()
+			_ = f.Close()
 			fileServer.ServeHTTP(w, r)
 			return
 		}

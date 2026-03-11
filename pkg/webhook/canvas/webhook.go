@@ -49,7 +49,9 @@ func (w *CanvasWebhook) ValidateCreate(ctx context.Context, canvas *v1alpha1.Can
 }
 
 // ValidateUpdate implements admission.CustomValidator so a webhook will be registered for the type
-func (w *CanvasWebhook) ValidateUpdate(ctx context.Context, oldObj, newObj *v1alpha1.Canvas) (admission.Warnings, error) {
+func (w *CanvasWebhook) ValidateUpdate(
+	ctx context.Context, oldObj, newObj *v1alpha1.Canvas,
+) (admission.Warnings, error) {
 	w.Logger.Debug("validate update canvas", "name", newObj.Name)
 
 	return nil, w.validateCanvas(newObj)

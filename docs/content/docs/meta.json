@@ -1,8 +1,5 @@
 {
   "title": "Documentation",
   "root": true,
-  "pages": [
-    "---Introduction---",
-    "index"
-  ]
+  "pages": ["---Introduction---", "index"]
 }
