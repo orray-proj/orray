@@ -44,17 +44,15 @@ generate: codegen-opanapi codegen-docs ## Generate code containing DeepCopy, Dee
 .PHONY: codegen-opanapi
 codegen-opanapi:
 	rm -f api/swagger.yaml api/swagger.json
-	rm -rf /tmp/swagger-build
-	mkdir -p /tmp/swagger-build
+	rm -rf api/docs
 	$(SWAG) init \
 	    --generalInfo pkg/rest/router.go \
-		--output /tmp/swagger-build \
+		--output api/docs \
 		--parseDependency \
 		--parseInternal \
-		--outputTypes yaml,json
-	mv /tmp/swagger-build/swagger.yaml api/
-	mv /tmp/swagger-build/swagger.json api/
-	rm -rf /tmp/swagger-build
+		--outputTypes yaml,json,go
+	mv api/docs/swagger.yaml api/
+	mv api/docs/swagger.json api/
 
 .PHONY: codegen-docs
 codegen-docs:
