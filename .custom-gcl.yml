@@ -1,0 +1,6 @@
+# Custom golangci-lint binary needed because `logcheck` is not a built-in
+# linter. It requires the module plugin interface.
+version: v2.11.3
+plugins:
+  - module: sigs.k8s.io/logtools/logcheck/gclplugin
+    version: v0.10.1

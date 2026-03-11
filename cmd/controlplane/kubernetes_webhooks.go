@@ -8,9 +8,9 @@ import (
 	authzv1 "k8s.io/api/authorization/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
-	ctrl "sigs.k8s.io/controller-runtime"
+	ctrlruntime "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
-	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
 	"github.com/orray-proj/orray/api/v1alpha1"
@@ -75,12 +75,12 @@ func (k *kubernetesWebhooksServer) run(ctx context.Context) error {
 		)
 	}
 
-	mgr, err := ctrl.NewManager(restCfg, ctrl.Options{
+	mgr, err := ctrlruntime.NewManager(restCfg, ctrlruntime.Options{
 		Scheme: scheme,
 		WebhookServer: webhook.NewServer(webhook.Options{
 			Port: 9443,
 		}),
-		Metrics: server.Options{
+		Metrics: metricsserver.Options{
 			BindAddress: k.MetricsBindAddress,
 		},
 		PprofBindAddress: k.PprofBindAddress,
@@ -107,7 +107,7 @@ func (k *kubernetesWebhooksServer) run(ctx context.Context) error {
 }
 
 // startWebhooksServer starts the webhooks server.
-func (kubernetesWebhooksServer) startWebhooksServer(ctx context.Context, mgr ctrl.Manager) error {
+func (kubernetesWebhooksServer) startWebhooksServer(ctx context.Context, mgr ctrlruntime.Manager) error {
 	if err := mgr.Start(ctx); err != nil {
 		return fmt.Errorf("error starting orray webhooks server: %w", err)
 	}

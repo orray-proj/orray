@@ -8,21 +8,21 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/gin-gonic/gin"
 	"github.com/orray-proj/orray/pkg/logging"
-	"github.com/orray-proj/orray/pkg/server"
+	basesrv "github.com/orray-proj/orray/pkg/server"
 	"k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Config extends the base server config with REST-specific options.
 type Config struct {
-	server.Config
+	basesrv.Config
 
 	BindAddress string `env:"REST_BIND_ADDRESS" envDefault:":8080"`
 	Mode        string `env:"REST_MODE" envDefault:"release"`
 }
 
 // NewConfig create a new config for a rest server
-func NewConfig(cfg *Config, serverConfig server.Config) error {
+func NewConfig(cfg *Config, serverConfig basesrv.Config) error {
 	cfg.Config = serverConfig
 	if err := env.Parse(cfg); err != nil {
 		return fmt.Errorf("failed to parse rest config: %w", err)
@@ -41,7 +41,10 @@ type Server struct {
 }
 
 // NewServer creates a new REST API server.
-func NewServer(ctx context.Context, cfg *Config, logger *logging.Logger, kubeClient client.Client, clientset kubernetes.Interface) *Server {
+func NewServer(
+	ctx context.Context, cfg *Config, logger *logging.Logger,
+	kubeClient client.Client, clientset kubernetes.Interface,
+) *Server {
 	if cfg.Mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
