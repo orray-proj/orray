@@ -19,7 +19,11 @@ paths:
       operationId: ListCanvasesV1alpha1
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
       summary: List all canvases
       tags:
       - Canvas

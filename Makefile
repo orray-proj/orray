@@ -37,8 +37,12 @@ help: ## Display this help.
 manifests: ## Generate CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) crd paths="./..." output:crd:artifacts:config=charts/orray/resources/crds
 
+.PHONY: codegen-ui
+codegen-ui: codegen-opanapi
+	cd ui && bun run codegen
+
 .PHONY: generate
-generate: codegen-opanapi codegen-docs ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
+generate: codegen-opanapi codegen-docs codegen-ui ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 
 .PHONY: codegen-opanapi
