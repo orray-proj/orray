@@ -35,7 +35,7 @@ The easiest way to get started is using **Tilt** with **Kind**.
 
 1. **Create a local cluster:**
    ```sh
-   make hack-kind-up
+   make dev-cluster-up
    ```
 
 2. **Start the development environment:**
