@@ -9,6 +9,9 @@ devenv.local.yaml
 ui/dist
 pkg/ui/dist
 
+# Custom golangci-lint binary (built via `golangci-lint custom`)
+custom-gcl
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

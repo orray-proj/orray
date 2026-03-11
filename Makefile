@@ -3,7 +3,7 @@ KUBECTL ?= kubectl
 CONTROLLER_GEN ?= go tool sigs.k8s.io/controller-tools/cmd/controller-gen
 ENVTEST ?= go tool sigs.k8s.io/controller-runtime/tools/setup-envtest
 KUSTOMIZE ?= go tool sigs.k8s.io/kustomize/kustomize/v5
-GOLANGCI_LINT = go tool github.com/golangci/golangci-lint/cmd/golangci-lint
+GOLANGCI_LINT = ./custom-gcl
 CTLPTL ?= go tool github.com/tilt-dev/ctlptl/cmd/ctlptl
 SWAG ?= go run github.com/swaggo/swag/cmd/swag
 
@@ -40,17 +40,15 @@ manifests: ## Generate CustomResourceDefinition objects.
 .PHONY: codegen-opanapi
 codegen-opanapi:
 	rm -f api/swagger.yaml api/swagger.json
-	rm -rf /tmp/swagger-build
-	mkdir -p /tmp/swagger-build
+	rm -rf api/docs
 	$(SWAG) init \
 	    --generalInfo pkg/rest/router.go \
-		--output /tmp/swagger-build \
+		--output api/docs \
 		--parseDependency \
 		--parseInternal \
-		--outputTypes yaml,json
-	mv /tmp/swagger-build/swagger.yaml api/
-	mv /tmp/swagger-build/swagger.json api/
-	rm -rf /tmp/swagger-build
+		--outputTypes yaml,json,go
+	mv api/docs/swagger.yaml api/
+	mv api/docs/swagger.json api/
 
 .PHONY: codegen-docs
 codegen-docs:
@@ -77,15 +75,21 @@ test: manifests generate fmt vet ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(KUBERNETES_VERSION) -p path)" go test $$(go list ./... | grep -v /api | grep -v /cmd) -coverprofile cover.out
 
 .PHONY: lint
-lint: ## Run golangci-lint linter
+lint: lint-go ui-lint docs-lint ## Run all linters
+
+custom-gcl:
+	go tool github.com/golangci/golangci-lint/v2/cmd/golangci-lint custom
+
+.PHONY: lint-go
+lint-go: custom-gcl ## Run golangci-lint linter
 	$(GOLANGCI_LINT) run
 
-.PHONY: lint-fix
-lint-fix: ## Run golangci-lint linter and perform fixes
+.PHONY: lint-go-fix
+lint-go-fix: custom-gcl ## Run golangci-lint linter and perform fixes
 	$(GOLANGCI_LINT) run --fix
 
-.PHONY: lint-config
-lint-config: ## Verify golangci-lint linter configuration
+.PHONY: lint-go-config
+lint-go-config: custom-gcl ## Verify golangci-lint linter configuration
 	$(GOLANGCI_LINT) config verify
 
 ##@ UI

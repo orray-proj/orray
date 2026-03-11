@@ -9,7 +9,7 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	coordinationv1 "k8s.io/api/coordination/v1"
 	corev1 "k8s.io/api/core/v1"
-	ctrl "sigs.k8s.io/controller-runtime"
+	ctrlruntime "sigs.k8s.io/controller-runtime"
 
 	"github.com/orray-proj/orray/api/v1alpha1"
 	"github.com/orray-proj/orray/pkg/controller/canvas"
@@ -110,12 +110,12 @@ func (c *controller) setupControllerManager(_ context.Context) (manager.Manager,
 		)
 	}
 
-	mgr, err := ctrl.NewManager(restCfg, ctrl.Options{
+	mgr, err := ctrlruntime.NewManager(restCfg, ctrlruntime.Options{
 		Scheme: scheme,
 		Metrics: server.Options{
 			BindAddress: "0",
 		},
-		PprofBindAddress: c.Config.PprofBindAddress,
+		PprofBindAddress: c.PprofBindAddress,
 		Client: client.Options{
 			Cache: &client.CacheOptions{
 				DisableFor: []client.Object{&corev1.Secret{}},

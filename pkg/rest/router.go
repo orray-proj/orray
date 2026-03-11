@@ -2,6 +2,7 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "github.com/orray-proj/orray/api/docs"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
