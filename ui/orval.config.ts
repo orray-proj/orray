@@ -8,7 +8,6 @@ export default defineConfig({
       schemas: "./src/generated/models",
       mode: "single",
       client: "react-query",
-      baseUrl: { getBaseUrlFromSpecification: false, baseUrl: "/api" },
       override: {
         mutator: {
           path: "./src/lib/fetcher.ts",

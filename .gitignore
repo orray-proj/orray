@@ -47,5 +47,4 @@ go.work
 # UI
 ui/node_modules/
 ui/dist/
-ui/src/generated/
 *.tsbuildinfo
