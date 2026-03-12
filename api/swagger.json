@@ -29,7 +29,14 @@
                 ],
                 "summary": "List all canvases",
                 "operationId": "ListCanvasesV1alpha1",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
             }
         }
     }

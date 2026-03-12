@@ -51,7 +51,7 @@ The recommended way to develop Orray is using **Tilt** with **Kind**.
 ### 1. Set up your local cluster
 We provide a helper in the `Makefile` to create a Kind cluster with the necessary configuration:
 ```bash
-make hack-kind-up
+make dev-cluster-up
 ```
 
 ### 2. Start Tilt
@@ -105,7 +105,7 @@ bunx ultracite check # lint
 ### Docker
 
 ```bash
-make build-image    # full image with UI baked in
+make docker-build   # full image with UI baked in
 ```
 
 ---
