@@ -16,8 +16,4 @@ Kubernetes controller (Go) with a React SPA frontend (`ui/`) and Next.js docs si
 
 ## Internal docs
 
-All internal documentation lives in Notion. Use the Notion MCP tools to search and read it.
-
-## currentDate
-
-Today's date is 2026-03-07.
+Product specs, feature requirements, API schema, architectural decisions, and competitive analysis live in Notion. Use the Notion MCP tools to search for context before starting work on a feature or design decision.

@@ -1,13 +1,13 @@
 # Docs
 
-Next.js documentation site (Fumadocs). Uses `bun` as package manager.
+Next.js documentation site (Fumadocs).
 
-## Commands
+## Lint, typecheck & review
+
+Run both before considering any docs change done:
 
 ```bash
-make docs-dev    # dev server
-make docs-build  # production build
 make docs-lint   # ultracite check
 ```
 
-Run `make docs-lint` before considering any docs change done.
+Then run `/coderabbit:review`.

@@ -1,16 +1,14 @@
 # UI
 
-Vite + React SPA. Uses `bun` as package manager.
+Vite + React SPA.
 
-## Lint & typecheck
+## Lint, typecheck & review
+
+Run all three before considering any UI change done:
 
 ```bash
 make ui-lint    # biome check
 make ui-types   # tsc --noEmit
 ```
 
-Run both before considering any UI change done:
-
-```bash
-make ui-lint && make ui-types
-```
+Then run `/coderabbit:review`.
