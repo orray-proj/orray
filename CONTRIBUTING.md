@@ -2,6 +2,21 @@
 
 ## Quick start
 
+<details>
+<summary>Prerequisites & installation</summary>
+
+| Tool | Version | Install guide |
+|------|---------|---------------|
+| Go | 1.24.6+ | [go.dev/doc/install](https://go.dev/doc/install) |
+| Docker | latest | [docs.docker.com/get-docker](https://docs.docker.com/get-docker/) |
+| Tilt | 0.30+ | [docs.tilt.dev/install](https://docs.tilt.dev/install.html) |
+| Kind | latest | [kind.sigs.k8s.io](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) |
+| Helm | latest | [helm.sh/docs/intro/install](https://helm.sh/docs/intro/install/) |
+| Kubectl | latest | [kubernetes.io/docs/tasks/tools](https://kubernetes.io/docs/tasks/tools/) |
+| Bun | latest | [bun.sh/docs/installation](https://bun.sh/docs/installation) |
+
+</details>
+
 Create a local Kind cluster:
 ```bash
 make dev-cluster-up
@@ -45,20 +60,3 @@ To run across all areas use the aggregates:
 ## Branching & PRs
 
 Use a feature branch and open a PR. Before pushing, run lint and tests for the areas you changed.
-
----
-
-<details>
-<summary>Prerequisites & installation</summary>
-
-| Tool | Version | Install guide |
-|------|---------|---------------|
-| Go | 1.24.6+ | [go.dev/doc/install](https://go.dev/doc/install) |
-| Docker | latest | [docs.docker.com/get-docker](https://docs.docker.com/get-docker/) |
-| Tilt | 0.30+ | [docs.tilt.dev/install](https://docs.tilt.dev/install.html) |
-| Kind | latest | [kind.sigs.k8s.io](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) |
-| Helm | latest | [helm.sh/docs/intro/install](https://helm.sh/docs/intro/install/) |
-| Kubectl | latest | [kubernetes.io/docs/tasks/tools](https://kubernetes.io/docs/tasks/tools/) |
-| Bun | latest | [bun.sh/docs/installation](https://bun.sh/docs/installation) |
-
-</details>
