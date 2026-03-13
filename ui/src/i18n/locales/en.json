@@ -1,0 +1,22 @@
+{
+  "common": {
+    "appName": "Orray"
+  },
+  "nav": {
+    "home": "Home"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "select": "Select language",
+    "en": "English",
+    "it": "Italiano"
+  },
+  "canvas": {
+    "title": "Spatial Platform Interface"
+  }
+}
