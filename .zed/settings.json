@@ -15,8 +15,17 @@
         },
       },
     },
+    "tilt": {
+      "binary": {
+        "path": "tilt",
+        "arguments": ["lsp", "start"],
+      },
+    },
   },
   "languages": {
+    "Starlark": {
+      "language_servers": ["tilt"],
+    },
     "JavaScript": {
       "formatter": {
         "language_server": {
