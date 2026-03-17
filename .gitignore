@@ -1,7 +1,5 @@
-## Devenv
-.devenv*
-devenv.local.nix
-devenv.local.yaml
+# mise
+.mise.local.toml
 
 # direnv
 .direnv
