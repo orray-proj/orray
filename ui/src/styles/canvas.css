@@ -1,0 +1,115 @@
+@import "@xyflow/react/dist/style.css";
+
+/* --- CSS variable bridge: preset → ReactFlow internals --- */
+.react-flow {
+  --xy-background-color: var(--orray-canvas-bg);
+  --xy-node-background-color: var(--orray-node-bg);
+  --xy-node-border-color-default: var(--orray-node-border);
+  --xy-selection-background-color: var(--orray-selection-bg);
+  --xy-selection-border-color: var(--orray-selection-border);
+  --xy-minimap-background-color: var(--orray-minimap-bg);
+  --xy-minimap-node-background-color: var(--orray-minimap-node);
+  --xy-minimap-mask-background-color: oklch(
+    0 0 0 /
+    var(--orray-minimap-mask-opacity)
+  );
+}
+
+/* --- Node styles --- */
+.orray-node {
+  min-width: 200px;
+  max-width: 280px;
+  padding: 10px 14px;
+  font-family: var(--orray-font-family);
+  font-size: var(--orray-node-label-size);
+  color: var(--orray-node-fg);
+  background: var(--orray-node-bg);
+  border: 1px solid var(--orray-node-border);
+  border-radius: var(--orray-node-radius);
+  box-shadow: var(--orray-node-shadow);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.orray-node--selected {
+  border-color: var(--orray-selection-border);
+  box-shadow: 0 0 0 2px var(--orray-selection-bg);
+}
+
+.orray-node--resource {
+  border-style: dashed;
+}
+
+.orray-node__kind {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 1px 5px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--orray-node-border);
+  border-radius: 3px;
+}
+
+.orray-node__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.orray-node__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+/* --- Health dot --- */
+.orray-health-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* --- Handles --- */
+.orray-handle {
+  width: 6px !important;
+  height: 6px !important;
+  background: var(--orray-node-border) !important;
+  border: none !important;
+}
+
+/* --- Edge labels --- */
+.orray-edge-label {
+  font-family: var(--orray-font-family);
+  font-size: 10px;
+  opacity: 0.5;
+  fill: var(--orray-node-fg);
+}
+
+.orray-edge-label--error {
+  font-weight: 600;
+  opacity: 0.85;
+  fill: var(--orray-health-unhealthy);
+}
+
+/* --- Error edge pulse --- */
+.orray-edge--error {
+  animation: orray-pulse 2s ease-in-out infinite;
+}
+
+@keyframes orray-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

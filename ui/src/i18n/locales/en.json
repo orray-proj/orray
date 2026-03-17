@@ -18,5 +18,12 @@
   },
   "canvas": {
     "title": "Spatial Platform Interface"
+  },
+  "preset": {
+    "label": "Theme preset",
+    "defaultLight": "Default Light",
+    "defaultDark": "Default Dark",
+    "highContrast": "High Contrast",
+    "blueprint": "Blueprint"
   }
 }

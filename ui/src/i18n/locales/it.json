@@ -18,5 +18,12 @@
   },
   "canvas": {
     "title": "Interfaccia Piattaforma Spaziale"
+  },
+  "preset": {
+    "label": "Preset tema",
+    "defaultLight": "Chiaro predefinito",
+    "defaultDark": "Scuro predefinito",
+    "highContrast": "Alto contrasto",
+    "blueprint": "Blueprint"
   }
 }
