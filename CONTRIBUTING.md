@@ -24,7 +24,7 @@ make dev-cluster-up
 
 Start the dev environment:
 ```bash
-tilt up                
+tilt up
 ```
 
 ## Project structure
@@ -55,7 +55,7 @@ To run across all areas use the aggregates:
 
 - `make lint`
 - `make test`
-- `make build` 
+- `make build`
 
 ## Branching & PRs
 
