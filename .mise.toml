@@ -2,3 +2,7 @@
 go = "latest"
 bun = "latest"
 node = "latest"
+tilt = "latest"
+helm = "latest"
+kind = "latest"
+kubectl = "latest"
