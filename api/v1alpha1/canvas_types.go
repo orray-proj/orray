@@ -23,6 +23,29 @@ type Canvas struct {
 	Status CanvasStatus `json:"status,omitempty"`
 }
 
+const (
+	// AnnotationCanvas is the annotation key for an orray canvas.
+	AnnotationCanvas = "orray.dev/canvas"
+	// AnnotationManagedBy is the annotation key for the manager of the canvas.
+	AnnotationManagedBy = "orray.dev/managed-by"
+
+	// FinalizerCanvas is the finalizer for a Canvas.
+	FinalizerCanvas = "orray.dev/finalizer"
+
+	// ConditionTypeReady is the condition type for the Canvas's ready state.
+	ConditionTypeReady = "Ready"
+
+	// ReasonProvisioning is the reason for the Canvas being in a provisioning state.
+	ReasonProvisioning = "Provisioning"
+	// ReasonProvisioned is the reason for the Canvas being in a provisioned state.
+	ReasonProvisioned = "Provisioned"
+	// ReasonFailed is the reason for the Canvas being in a failed state.
+	ReasonFailed = "Failed"
+
+	// ManagedByValue is the value for the ManagedBy annotation.
+	ManagedByValue = "orray-controller"
+)
+
 func (p *Canvas) GetStatus() *CanvasStatus {
 	return &p.Status
 }
