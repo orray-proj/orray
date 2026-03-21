@@ -20,12 +20,21 @@ rules:
   - ""
   resources:
   - pods
+  - namespaces
   verbs:
   - watch
   - list
   - get
   - create
   - delete
+- apiGroups:
+  - orray.dev
+  resources:
+  - canvases/status
+  verbs:
+  - get
+  - patch
+  - update
 - apiGroups:
   - batch
   resources:

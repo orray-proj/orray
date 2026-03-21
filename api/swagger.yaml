@@ -1,4 +1,66 @@
 basePath: /api
+definitions:
+  Canvas:
+    properties:
+      displayName:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  CreateCanvasRequest:
+    properties:
+      displayName:
+        type: string
+      name:
+        type: string
+    required:
+    - displayName
+    - name
+    type: object
+  ErrorResponse:
+    properties:
+      code:
+        description: Code is a machine-readable error code.
+        type: string
+      details:
+        description: Details provides additional context or field-level errors.
+      message:
+        description: Message is a human-readable description of the error.
+        type: string
+      requestId:
+        description: RequestID is a unique identifier for the request, useful for
+          debugging.
+        type: string
+    type: object
+  ListResponse-Canvas:
+    properties:
+      items:
+        description: Items is the slice of data being returned.
+        items:
+          $ref: '#/definitions/Canvas'
+        type: array
+      pagination:
+        allOf:
+        - $ref: '#/definitions/Pagination'
+        description: Pagination contains the metadata for the current page.
+    type: object
+  Pagination:
+    properties:
+      limit:
+        description: Limit is the maximum number of items requested.
+        type: integer
+      offset:
+        description: Offset is the number of items skipped.
+        type: integer
+      total:
+        description: Total is the total number of items available.
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -17,14 +79,64 @@ paths:
     get:
       description: List all the canvases the user has access to
       operationId: ListCanvasesV1alpha1
+      parameters:
+      - description: Limit is the maximum number of items to return.
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset is the number of items to skip.
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            type: string
+            $ref: '#/definitions/ListResponse-Canvas'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       summary: List all canvases
+      tags:
+      - Canvas
+    post:
+      consumes:
+      - application/json
+      description: Create a new canvas with the given display name
+      operationId: CreateCanvasV1alpha1
+      parameters:
+      - description: Canvas data
+        in: body
+        name: canvas
+        required: true
+        schema:
+          $ref: '#/definitions/CreateCanvasRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Canvas'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Create a new canvas
       tags:
       - Canvas
 swagger: "2.0"

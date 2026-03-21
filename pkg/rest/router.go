@@ -22,21 +22,10 @@ import (
 // @host localhost:8080
 // @BasePath /api
 
-// securityHeaders returns middleware that sets protective HTTP headers on every response.
-func securityHeaders() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Header("X-Frame-Options", "DENY")
-		c.Header("X-Content-Type-Options", "nosniff")
-		c.Header("Referrer-Policy", "strict-origin-when-cross-origin")
-		c.Header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
-		c.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
-		c.Next()
-	}
-}
-
 func (s *Server) setupRESTRouter() {
 	router := gin.Default()
 
+	router.Use(requestID())
 	router.Use(securityHeaders())
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -44,6 +33,7 @@ func (s *Server) setupRESTRouter() {
 	v1alpha1 := api.Group("/v1alpha1")
 	{
 		v1alpha1.GET("/canvases", s.listCanvasesV1alpha1)
+		v1alpha1.POST("/canvases", s.createCanvasV1alpha1)
 	}
 
 	s.router = router
