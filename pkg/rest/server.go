@@ -7,6 +7,7 @@ import (
 
 	"github.com/caarlos0/env/v11"
 	"github.com/gin-gonic/gin"
+	"github.com/orray-proj/orray/pkg/api"
 	"github.com/orray-proj/orray/pkg/logging"
 	basesrv "github.com/orray-proj/orray/pkg/server"
 	"k8s.io/client-go/kubernetes"
@@ -38,6 +39,8 @@ type Server struct {
 
 	kubeClient client.Client
 	clientset  kubernetes.Interface
+
+	canvasService api.CanvasService
 }
 
 // NewServer creates a new REST API server.
@@ -50,11 +53,12 @@ func NewServer(
 	}
 
 	server := &Server{
-		config:     cfg,
-		logger:     logger.WithValues("component", "apiserver"),
-		router:     nil,
-		kubeClient: kubeClient,
-		clientset:  clientset,
+		config:        cfg,
+		logger:        logger.WithValues("component", "apiserver"),
+		router:        nil,
+		kubeClient:    kubeClient,
+		clientset:     clientset,
+		canvasService: api.NewCanvasService(kubeClient),
 	}
 
 	server.setupRESTRouter()

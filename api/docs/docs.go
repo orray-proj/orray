@@ -35,13 +35,179 @@ const docTemplate = `{
                 ],
                 "summary": "List all canvases",
                 "operationId": "ListCanvasesV1alpha1",
+                "parameters": [
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Limit is the maximum number of items to return.",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Offset is the number of items to skip.",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/ListResponse-Canvas"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
                         }
                     }
+                }
+            },
+            "post": {
+                "description": "Create a new canvas with the given display name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Canvas"
+                ],
+                "summary": "Create a new canvas",
+                "operationId": "CreateCanvasV1alpha1",
+                "parameters": [
+                    {
+                        "description": "Canvas data",
+                        "name": "canvas",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateCanvasRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Canvas"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Canvas": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "displayName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "CreateCanvasRequest": {
+            "type": "object",
+            "required": [
+                "displayName",
+                "name"
+            ],
+            "properties": {
+                "displayName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code is a machine-readable error code.",
+                    "type": "string"
+                },
+                "details": {
+                    "description": "Details provides additional context or field-level errors."
+                },
+                "message": {
+                    "description": "Message is a human-readable description of the error.",
+                    "type": "string"
+                },
+                "requestId": {
+                    "description": "RequestID is a unique identifier for the request, useful for debugging.",
+                    "type": "string"
+                }
+            }
+        },
+        "ListResponse-Canvas": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "Items is the slice of data being returned.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Canvas"
+                    }
+                },
+                "pagination": {
+                    "description": "Pagination contains the metadata for the current page.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/Pagination"
+                        }
+                    ]
+                }
+            }
+        },
+        "Pagination": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "description": "Limit is the maximum number of items requested.",
+                    "type": "integer"
+                },
+                "offset": {
+                    "description": "Offset is the number of items skipped.",
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "Total is the total number of items available.",
+                    "type": "integer"
                 }
             }
         }
