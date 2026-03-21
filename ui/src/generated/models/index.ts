@@ -6,3 +6,9 @@
  * OpenAPI spec version: 1.0
  */
 
+export * from './canvas';
+export * from './createCanvasRequest';
+export * from './errorResponse';
+export * from './listCanvasesV1alpha1Params';
+export * from './listResponseCanvas';
+export * from './pagination';
