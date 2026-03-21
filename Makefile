@@ -65,6 +65,7 @@ gen-openapi: ## Generate OpenAPI/Swagger docs from annotations.
 		--output api/docs \
 		--parseDependency \
 		--parseInternal \
+		--useStructName \
 		--outputTypes yaml,json,go
 	mv api/docs/swagger.yaml api/
 	mv api/docs/swagger.json api/
