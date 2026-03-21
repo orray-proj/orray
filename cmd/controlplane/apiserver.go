@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/orray-proj/orray/api/v1alpha1"
 	"github.com/orray-proj/orray/pkg/kubernetes"
 	"github.com/orray-proj/orray/pkg/rest"
 	versionpkg "github.com/orray-proj/orray/pkg/version"
 	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/runtime"
 	stdkubernetes "k8s.io/client-go/kubernetes"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -49,7 +51,17 @@ func (s *apiServer) run(ctx context.Context) error {
 		return fmt.Errorf("error loading in-cluster REST config: %w", err)
 	}
 
-	kubeClient, err := client.New(restCfg, client.Options{})
+	scheme := runtime.NewScheme()
+	if err = v1alpha1.AddToScheme(scheme); err != nil {
+		return fmt.Errorf(
+			"error adding orray v1alpha1 API to controller manager scheme: %w",
+			err,
+		)
+	}
+
+	kubeClient, err := client.New(restCfg, client.Options{
+		Scheme: scheme,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to create kubernetes client: %w", err)
 	}
