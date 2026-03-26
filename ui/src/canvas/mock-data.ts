@@ -1,291 +1,603 @@
 import type { CanvasEdge, CanvasNode } from "./types";
 
+const LAYER_ID = "layer:default";
+
 const nodes: CanvasNode[] = [
   // --- Ingress layer ---
   {
-    id: "ingress-gateway",
+    id: "node:ingress-gateway",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "ingress-gateway",
-      kind: "Deployment",
-      namespace: "ingress",
-      replicas: { ready: 2, desired: 2 },
-      health: "healthy",
+      name: "ingress-gateway",
+      kind: "gateway",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "ingress",
+          health: "healthy",
+          labels: { replicas: "2" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "networking.k8s.io/v1",
+            resource: "Ingress",
+            namespace: "ingress",
+            name: "ingress-gateway",
+            uid: "a1",
+          },
+        },
+      },
     },
   },
 
   // --- Service layer ---
   {
-    id: "api-server",
+    id: "node:api-server",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "api-server",
-      kind: "Deployment",
-      namespace: "production",
-      replicas: { ready: 3, desired: 3 },
-      health: "healthy",
+      name: "api-server",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { replicas: "3", version: "v1.2.0" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "production",
+            name: "api-server",
+            uid: "b1",
+          },
+        },
+      },
     },
   },
   {
-    id: "auth-service",
+    id: "node:auth-service",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "auth-service",
-      kind: "Deployment",
-      namespace: "production",
-      replicas: { ready: 2, desired: 2 },
-      health: "healthy",
+      name: "auth-service",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { replicas: "2", version: "v3.1.0" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "production",
+            name: "auth-service",
+            uid: "b2",
+          },
+        },
+      },
     },
   },
   {
-    id: "order-service",
+    id: "node:order-service",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "order-service",
-      kind: "StatefulSet",
-      namespace: "production",
-      replicas: { ready: 3, desired: 3 },
-      health: "healthy",
+      name: "order-service",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { replicas: "3", version: "v2.3.1" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "StatefulSet",
+            namespace: "production",
+            name: "order-service",
+            uid: "b3",
+          },
+        },
+      },
     },
   },
   {
-    id: "payment-service",
+    id: "node:payment-service",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "payment-service",
-      kind: "Deployment",
-      namespace: "production",
-      replicas: { ready: 2, desired: 2 },
-      health: "degraded",
+      name: "payment-service",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "degraded",
+          labels: { replicas: "2", version: "v1.8.3" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "production",
+            name: "payment-service",
+            uid: "b4",
+          },
+        },
+      },
     },
   },
   {
-    id: "notification-service",
+    id: "node:notification-service",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "notification-service",
-      kind: "Deployment",
-      namespace: "production",
-      replicas: { ready: 1, desired: 2 },
-      health: "unhealthy",
+      name: "notification-service",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "critical",
+          labels: { replicas: "1" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "production",
+            name: "notification-service",
+            uid: "b5",
+          },
+        },
+      },
     },
   },
 
   // --- Worker layer ---
   {
-    id: "email-worker",
+    id: "node:email-worker",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "email-worker",
-      kind: "Job",
-      namespace: "production",
-      replicas: { ready: 1, desired: 1 },
-      health: "healthy",
+      name: "email-worker",
+      kind: "job",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: {},
+          source: {
+            provider: "kubernetes",
+            apiVersion: "batch/v1",
+            resource: "Job",
+            namespace: "production",
+            name: "email-worker",
+            uid: "c1",
+          },
+        },
+      },
     },
   },
   {
-    id: "report-generator",
+    id: "node:report-generator",
     type: "component",
     position: { x: 0, y: 0 },
     data: {
-      label: "report-generator",
-      kind: "CronJob",
-      namespace: "production",
-      replicas: { ready: 0, desired: 0 },
-      health: "unknown",
+      name: "report-generator",
+      kind: "job",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "unknown",
+          labels: {},
+          source: {
+            provider: "kubernetes",
+            apiVersion: "batch/v1",
+            resource: "CronJob",
+            namespace: "production",
+            name: "report-generator",
+            uid: "c2",
+          },
+        },
+      },
     },
   },
 
   // --- Resource layer ---
   {
-    id: "postgres-primary",
+    id: "node:postgres-primary",
     type: "resource",
     position: { x: 0, y: 0 },
     data: {
-      label: "postgres-primary",
-      kind: "Database",
-      provider: "PostgreSQL",
-      health: "healthy",
+      name: "postgres-primary",
+      kind: "database",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { provider: "PostgreSQL" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "Service",
+            namespace: "production",
+            name: "postgres-primary",
+            uid: "d1",
+          },
+        },
+      },
     },
   },
   {
-    id: "redis-cache",
+    id: "node:redis-cache",
     type: "resource",
     position: { x: 0, y: 0 },
     data: {
-      label: "redis-cache",
-      kind: "Cache",
-      provider: "Redis",
-      health: "healthy",
+      name: "redis-cache",
+      kind: "cache",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { provider: "Redis" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "Service",
+            namespace: "production",
+            name: "redis-cache",
+            uid: "d2",
+          },
+        },
+      },
     },
   },
   {
-    id: "rabbitmq",
+    id: "node:rabbitmq",
     type: "resource",
     position: { x: 0, y: 0 },
     data: {
-      label: "rabbitmq",
-      kind: "Queue",
-      provider: "RabbitMQ",
-      health: "degraded",
+      name: "rabbitmq",
+      kind: "queue",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "degraded",
+          labels: { provider: "RabbitMQ" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "Service",
+            namespace: "production",
+            name: "rabbitmq",
+            uid: "d3",
+          },
+        },
+      },
     },
   },
   {
-    id: "s3-storage",
+    id: "node:s3-storage",
     type: "resource",
     position: { x: 0, y: 0 },
     data: {
-      label: "s3-storage",
-      kind: "Storage",
-      provider: "S3",
-      health: "healthy",
+      name: "s3-storage",
+      kind: "storage",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { provider: "S3" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "PersistentVolumeClaim",
+            namespace: "production",
+            name: "s3-storage",
+            uid: "d4",
+          },
+        },
+      },
     },
   },
   {
-    id: "stripe-api",
+    id: "node:stripe-api",
     type: "resource",
     position: { x: 0, y: 0 },
     data: {
-      label: "stripe-api",
-      kind: "ExternalService",
-      provider: "Stripe",
-      health: "healthy",
+      name: "stripe-api",
+      kind: "external",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          namespace: "production",
+          health: "healthy",
+          labels: { provider: "Stripe" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "Service",
+            namespace: "production",
+            name: "stripe-api",
+            uid: "d5",
+          },
+        },
+      },
     },
   },
 ];
 
 const edges: CanvasEdge[] = [
-  // Ingress → services
+  // Ingress → services (api edges)
   {
-    id: "e-ingress-api",
-    source: "ingress-gateway",
-    target: "api-server",
-    type: "active",
-    data: { status: "active", protocol: "HTTP", rps: 1200 },
-  },
-  {
-    id: "e-ingress-auth",
-    source: "ingress-gateway",
-    target: "auth-service",
-    type: "active",
-    data: { status: "active", protocol: "HTTP", rps: 400 },
-  },
-
-  // api-server → downstream
-  {
-    id: "e-api-auth",
-    source: "api-server",
-    target: "auth-service",
-    type: "active",
-    data: { status: "active", protocol: "gRPC", rps: 800 },
-  },
-  {
-    id: "e-api-order",
-    source: "api-server",
-    target: "order-service",
-    type: "active",
-    data: { status: "active", protocol: "gRPC", rps: 350 },
-  },
-  {
-    id: "e-api-redis",
-    source: "api-server",
-    target: "redis-cache",
-    type: "active",
-    data: { status: "active", protocol: "TCP", rps: 2000 },
-  },
-
-  // order-service → data
-  {
-    id: "e-order-pg",
-    source: "order-service",
-    target: "postgres-primary",
-    type: "active",
-    data: { status: "active", protocol: "TCP", rps: 600 },
-  },
-  {
-    id: "e-order-rabbit",
-    source: "order-service",
-    target: "rabbitmq",
-    type: "active",
-    data: { status: "active", protocol: "AMQP", rps: 150 },
-  },
-
-  // payment-service
-  {
-    id: "e-payment-stripe",
-    source: "payment-service",
-    target: "stripe-api",
-    type: "active",
+    id: "edge:ingress-gateway->api-server:api",
+    source: "node:ingress-gateway",
+    target: "node:api-server",
+    type: "api",
     data: {
-      status: "active",
-      protocol: "HTTPS",
-      rps: 80,
-      latencyP99: 450,
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "http",
+          port: 8080,
+          labels: { "inferred-from": "ingress-rule" },
+        },
+      },
     },
   },
   {
-    id: "e-payment-pg",
-    source: "payment-service",
-    target: "postgres-primary",
-    type: "active",
-    data: { status: "active", protocol: "TCP", rps: 200 },
-  },
-  {
-    id: "e-api-payment",
-    source: "api-server",
-    target: "payment-service",
-    type: "active",
-    data: { status: "active", protocol: "gRPC", rps: 120 },
+    id: "edge:ingress-gateway->auth-service:api",
+    source: "node:ingress-gateway",
+    target: "node:auth-service",
+    type: "api",
+    data: {
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "http",
+          port: 8080,
+          labels: { "inferred-from": "ingress-rule" },
+        },
+      },
+    },
   },
 
-  // notification-service — error edge to rabbitmq
+  // api-server → downstream (api edges)
   {
-    id: "e-notif-rabbit",
-    source: "notification-service",
-    target: "rabbitmq",
-    type: "error",
+    id: "edge:api-server->auth-service:api",
+    source: "node:api-server",
+    target: "node:auth-service",
+    type: "api",
     data: {
-      status: "error",
-      protocol: "AMQP",
-      errorRate: 0.42,
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "grpc",
+          port: 9090,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
     },
   },
   {
-    id: "e-notif-email",
-    source: "notification-service",
-    target: "email-worker",
-    type: "idle",
-    data: { status: "idle", protocol: "internal" },
+    id: "edge:api-server->order-service:api",
+    source: "node:api-server",
+    target: "node:order-service",
+    type: "api",
+    data: {
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "grpc",
+          port: 9090,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:api-server->payment-service:api",
+    source: "node:api-server",
+    target: "node:payment-service",
+    type: "api",
+    data: {
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "grpc",
+          port: 9090,
+          labels: { "inferred-from": "service-selector" },
+        },
+      },
+    },
   },
 
-  // Workers → resources
+  // Component → Resource (dependency edges)
   {
-    id: "e-email-s3",
-    source: "email-worker",
-    target: "s3-storage",
-    type: "idle",
-    data: { status: "idle", protocol: "HTTPS" },
+    id: "edge:api-server->redis-cache:dependency",
+    source: "node:api-server",
+    target: "node:redis-cache",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "tcp",
+          port: 6379,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
   },
   {
-    id: "e-report-pg",
-    source: "report-generator",
-    target: "postgres-primary",
-    type: "active",
-    data: { status: "active", protocol: "TCP", rps: 30 },
+    id: "edge:order-service->postgres-primary:dependency",
+    source: "node:order-service",
+    target: "node:postgres-primary",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "tcp",
+          port: 5432,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
   },
   {
-    id: "e-report-s3",
-    source: "report-generator",
-    target: "s3-storage",
-    type: "active",
-    data: { status: "active", protocol: "HTTPS", rps: 10 },
+    id: "edge:payment-service->postgres-primary:dependency",
+    source: "node:payment-service",
+    target: "node:postgres-primary",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "tcp",
+          port: 5432,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:payment-service->stripe-api:dependency",
+    source: "node:payment-service",
+    target: "node:stripe-api",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "https",
+          port: 443,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:report-generator->postgres-primary:dependency",
+    source: "node:report-generator",
+    target: "node:postgres-primary",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "tcp",
+          port: 5432,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:report-generator->s3-storage:dependency",
+    source: "node:report-generator",
+    target: "node:s3-storage",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "https",
+          port: 443,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:email-worker->s3-storage:dependency",
+    source: "node:email-worker",
+    target: "node:s3-storage",
+    type: "dependency",
+    data: {
+      kind: "dependency",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "https",
+          port: 443,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+
+  // Async event edges (via queue)
+  {
+    id: "edge:order-service->rabbitmq:event",
+    source: "node:order-service",
+    target: "node:rabbitmq",
+    type: "event",
+    data: {
+      kind: "event",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "amqp",
+          port: 5672,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:notification-service->rabbitmq:event",
+    source: "node:notification-service",
+    target: "node:rabbitmq",
+    type: "event",
+    data: {
+      kind: "event",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "amqp",
+          port: 5672,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:notification-service->email-worker:event",
+    source: "node:notification-service",
+    target: "node:email-worker",
+    type: "event",
+    data: {
+      kind: "event",
+      origin: "inferred",
+      layers: {
+        [LAYER_ID]: {
+          protocol: "internal",
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
   },
 ];
 

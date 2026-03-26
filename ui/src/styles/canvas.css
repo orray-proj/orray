@@ -93,23 +93,6 @@
   fill: var(--orray-node-fg);
 }
 
-.orray-edge-label--error {
-  font-weight: 600;
-  opacity: 0.85;
-  fill: var(--orray-health-unhealthy);
-}
-
-/* --- Error edge pulse --- */
-.orray-edge--error {
-  animation: orray-pulse 2s ease-in-out infinite;
-}
-
-@keyframes orray-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.orray-edge-label--subtle {
+  opacity: 0.35;
 }

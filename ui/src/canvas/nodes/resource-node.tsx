@@ -2,16 +2,18 @@ import type { NodeProps } from "@xyflow/react";
 import { Handle, Position } from "@xyflow/react";
 import type {
   HealthStatus,
+  ResourceKind,
   ResourceNode as ResourceNodeType,
 } from "@/canvas/types";
 import { cn } from "@/lib/utils";
+import { useCanvasStore } from "@/stores/canvas-store";
 
-const KIND_LABELS: Record<ResourceNodeType["data"]["kind"], string> = {
-  Database: "db",
-  Cache: "cache",
-  Queue: "queue",
-  Storage: "store",
-  ExternalService: "ext",
+const KIND_LABELS: Record<ResourceKind, string> = {
+  database: "db",
+  cache: "cache",
+  queue: "queue",
+  storage: "store",
+  external: "ext",
 };
 
 function healthColor(status: HealthStatus) {
@@ -19,6 +21,12 @@ function healthColor(status: HealthStatus) {
 }
 
 export function ResourceNode({ data, selected }: NodeProps<ResourceNodeType>) {
+  const activeLayerId = useCanvasStore((s) => s.activeLayerId);
+  const projection =
+    data.layers[activeLayerId ?? ""] ?? Object.values(data.layers)[0];
+
+  const provider = projection?.labels?.provider;
+
   return (
     <div
       className={cn(
@@ -31,17 +39,19 @@ export function ResourceNode({ data, selected }: NodeProps<ResourceNodeType>) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <span className="orray-node__kind">{KIND_LABELS[data.kind]}</span>
-          <span className="orray-node__label">{data.label}</span>
+          <span className="orray-node__label">{data.name}</span>
         </div>
-        <span
-          className="orray-health-dot"
-          style={{ backgroundColor: healthColor(data.health) }}
-        />
+        {projection && (
+          <span
+            className="orray-health-dot"
+            style={{ backgroundColor: healthColor(projection.health) }}
+          />
+        )}
       </div>
 
-      {data.provider && (
+      {provider && (
         <div className="orray-node__meta">
-          <span>{data.provider}</span>
+          <span>{provider}</span>
         </div>
       )}
 

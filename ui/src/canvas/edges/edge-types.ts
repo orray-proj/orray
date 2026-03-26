@@ -1,10 +1,10 @@
 import type { EdgeTypes } from "@xyflow/react";
-import { ActiveEdge } from "./active-edge";
-import { ErrorEdge } from "./error-edge";
-import { IdleEdge } from "./idle-edge";
+import { ApiEdge } from "./api-edge";
+import { DependencyEdge } from "./dependency-edge";
+import { EventEdge } from "./event-edge";
 
 export const edgeTypes = {
-  active: ActiveEdge,
-  idle: IdleEdge,
-  error: ErrorEdge,
+  api: ApiEdge,
+  dependency: DependencyEdge,
+  event: EventEdge,
 } as EdgeTypes;

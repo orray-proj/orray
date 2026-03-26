@@ -4,16 +4,19 @@ import { create } from "zustand";
 import type { CanvasEdge, CanvasNode } from "@/canvas/types";
 
 interface CanvasState {
+  activeLayerId: string | null;
   edges: CanvasEdge[];
   nodes: CanvasNode[];
   onConnect: (connection: Connection) => void;
   onEdgesChange: (changes: EdgeChange<CanvasEdge>[]) => void;
   onNodesChange: (changes: NodeChange<CanvasNode>[]) => void;
+  setActiveLayerId: (id: string | null) => void;
   setEdges: (edges: CanvasEdge[]) => void;
   setNodes: (nodes: CanvasNode[]) => void;
 }
 
 export const useCanvasStore = create<CanvasState>()((set, get) => ({
+  activeLayerId: null,
   nodes: [],
   edges: [],
 
@@ -29,6 +32,7 @@ export const useCanvasStore = create<CanvasState>()((set, get) => ({
     set({ edges: addEdge(connection, get().edges) });
   },
 
+  setActiveLayerId: (id) => set({ activeLayerId: id }),
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
 }));

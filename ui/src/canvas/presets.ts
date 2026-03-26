@@ -19,7 +19,7 @@ export const defaultLightPreset: ThemePreset = {
   health: {
     healthy: "oklch(0.72 0.19 145)",
     degraded: "oklch(0.75 0.18 75)",
-    unhealthy: "oklch(0.63 0.24 27)",
+    critical: "oklch(0.63 0.24 27)",
     unknown: "oklch(0.7 0 0)",
   },
   edge: {
@@ -27,11 +27,12 @@ export const defaultLightPreset: ThemePreset = {
     strokeWidth: 1.5,
     animated: false,
     colors: {
-      active: "oklch(0.7 0 0)",
-      idle: "oklch(0.82 0 0)",
-      error: "oklch(0.63 0.24 27)",
+      api: "oklch(0.7 0 0)",
+      dependency: "oklch(0.82 0 0)",
+      event: "oklch(0.65 0.08 250)",
     },
-    idleDashArray: "5 5",
+    dependencyDashArray: "4 4",
+    eventDashArray: "8 4",
   },
   selection: {
     background: "oklch(0.88 0.05 250 / 0.15)",
@@ -67,7 +68,7 @@ export const defaultDarkPreset: ThemePreset = {
   health: {
     healthy: "oklch(0.72 0.19 145)",
     degraded: "oklch(0.75 0.18 75)",
-    unhealthy: "oklch(0.63 0.24 27)",
+    critical: "oklch(0.63 0.24 27)",
     unknown: "oklch(0.5 0 0)",
   },
   edge: {
@@ -75,11 +76,12 @@ export const defaultDarkPreset: ThemePreset = {
     strokeWidth: 1.5,
     animated: false,
     colors: {
-      active: "oklch(0.5 0 0)",
-      idle: "oklch(0.35 0 0)",
-      error: "oklch(0.63 0.24 27)",
+      api: "oklch(0.5 0 0)",
+      dependency: "oklch(0.35 0 0)",
+      event: "oklch(0.45 0.08 250)",
     },
-    idleDashArray: "5 5",
+    dependencyDashArray: "4 4",
+    eventDashArray: "8 4",
   },
   selection: {
     background: "oklch(0.5 0.1 250 / 0.2)",
@@ -115,7 +117,7 @@ export const highContrastPreset: ThemePreset = {
   health: {
     healthy: "oklch(0.85 0.25 145)",
     degraded: "oklch(0.85 0.22 85)",
-    unhealthy: "oklch(0.7 0.3 27)",
+    critical: "oklch(0.7 0.3 27)",
     unknown: "oklch(0.6 0 0)",
   },
   edge: {
@@ -123,11 +125,12 @@ export const highContrastPreset: ThemePreset = {
     strokeWidth: 2.5,
     animated: false,
     colors: {
-      active: "oklch(0.9 0 0)",
-      idle: "oklch(0.5 0 0)",
-      error: "oklch(0.7 0.3 27)",
+      api: "oklch(0.9 0 0)",
+      dependency: "oklch(0.5 0 0)",
+      event: "oklch(0.7 0.12 250)",
     },
-    idleDashArray: "6 4",
+    dependencyDashArray: "4 4",
+    eventDashArray: "8 4",
   },
   selection: {
     background: "oklch(1 0 0 / 0.12)",
@@ -163,7 +166,7 @@ export const blueprintPreset: ThemePreset = {
   health: {
     healthy: "oklch(0.78 0.17 170)",
     degraded: "oklch(0.78 0.17 85)",
-    unhealthy: "oklch(0.65 0.24 27)",
+    critical: "oklch(0.65 0.24 27)",
     unknown: "oklch(0.5 0.04 250)",
   },
   edge: {
@@ -171,11 +174,12 @@ export const blueprintPreset: ThemePreset = {
     strokeWidth: 1.5,
     animated: false,
     colors: {
-      active: "oklch(0.6 0.08 250)",
-      idle: "oklch(0.4 0.05 250)",
-      error: "oklch(0.65 0.24 27)",
+      api: "oklch(0.6 0.08 250)",
+      dependency: "oklch(0.4 0.05 250)",
+      event: "oklch(0.55 0.1 200)",
     },
-    idleDashArray: "4 6",
+    dependencyDashArray: "4 6",
+    eventDashArray: "8 4",
   },
   selection: {
     background: "oklch(0.55 0.1 250 / 0.2)",

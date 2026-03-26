@@ -18,7 +18,7 @@ function injectVars(
   --orray-node-shadow: ${preset.node.shadow};
   --orray-health-healthy: ${preset.health.healthy};
   --orray-health-degraded: ${preset.health.degraded};
-  --orray-health-unhealthy: ${preset.health.unhealthy};
+  --orray-health-critical: ${preset.health.critical};
   --orray-health-unknown: ${preset.health.unknown};
   --orray-selection-bg: ${preset.selection.background};
   --orray-selection-border: ${preset.selection.border};

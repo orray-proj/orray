@@ -6,10 +6,12 @@ import {
   getStraightPath,
 } from "@xyflow/react";
 import type { CanvasEdge } from "@/canvas/types";
+import { useCanvasStore } from "@/stores/canvas-store";
 import { usePresetStore } from "@/stores/preset-store";
 
-export function ErrorEdge(props: EdgeProps<CanvasEdge>) {
+export function EventEdge(props: EdgeProps<CanvasEdge>) {
   const preset = usePresetStore((s) => s.getActivePreset());
+  const activeLayerId = useCanvasStore((s) => s.activeLayerId);
   const pathParams = {
     sourceX: props.sourceX,
     sourceY: props.sourceY,
@@ -56,28 +58,29 @@ export function ErrorEdge(props: EdgeProps<CanvasEdge>) {
     }
   }
 
-  const errorRate = props.data?.errorRate;
+  const layers = props.data?.layers;
+  const projection = layers?.[activeLayerId ?? Object.keys(layers)[0]];
 
   return (
     <>
       <BaseEdge
-        className="orray-edge--error"
         id={props.id}
         path={edgePath}
         style={{
-          stroke: preset.edge.colors.error,
-          strokeWidth: preset.edge.strokeWidth + 0.5,
+          stroke: preset.edge.colors.event,
+          strokeWidth: preset.edge.strokeWidth,
+          strokeDasharray: preset.edge.eventDashArray,
         }}
       />
-      {errorRate != null && (
+      {projection?.protocol && (
         <text
-          className="orray-edge-label orray-edge-label--error"
+          className="orray-edge-label"
           dominantBaseline="central"
           textAnchor="middle"
           x={labelX}
           y={labelY}
         >
-          {(errorRate * 100).toFixed(0)}% err
+          {projection.protocol}
         </text>
       )}
     </>

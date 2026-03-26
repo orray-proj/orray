@@ -6,10 +6,12 @@ import {
   getStraightPath,
 } from "@xyflow/react";
 import type { CanvasEdge } from "@/canvas/types";
+import { useCanvasStore } from "@/stores/canvas-store";
 import { usePresetStore } from "@/stores/preset-store";
 
-export function ActiveEdge(props: EdgeProps<CanvasEdge>) {
+export function DependencyEdge(props: EdgeProps<CanvasEdge>) {
   const preset = usePresetStore((s) => s.getActivePreset());
+  const activeLayerId = useCanvasStore((s) => s.activeLayerId);
   const pathParams = {
     sourceX: props.sourceX,
     sourceY: props.sourceY,
@@ -56,25 +58,29 @@ export function ActiveEdge(props: EdgeProps<CanvasEdge>) {
     }
   }
 
+  const layers = props.data?.layers;
+  const projection = layers?.[activeLayerId ?? Object.keys(layers)[0]];
+
   return (
     <>
       <BaseEdge
         id={props.id}
         path={edgePath}
         style={{
-          stroke: preset.edge.colors.active,
+          stroke: preset.edge.colors.dependency,
           strokeWidth: preset.edge.strokeWidth,
+          strokeDasharray: preset.edge.dependencyDashArray,
         }}
       />
-      {props.data?.protocol && (
+      {projection?.protocol && (
         <text
-          className="orray-edge-label"
+          className="orray-edge-label orray-edge-label--subtle"
           dominantBaseline="central"
           textAnchor="middle"
           x={labelX}
           y={labelY}
         >
-          {props.data.protocol}
+          {projection.protocol}
         </text>
       )}
     </>

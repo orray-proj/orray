@@ -1,43 +1,94 @@
 import type { Edge, Node } from "@xyflow/react";
 
-export type HealthStatus = "healthy" | "degraded" | "unhealthy" | "unknown";
+// ---------------------------------------------------------------------------
+// Domain types — aligned with the Notion API schema (2026-03-25)
+// ---------------------------------------------------------------------------
+
+export type HealthStatus = "healthy" | "degraded" | "critical" | "unknown";
+
+export type ComponentKind = "service" | "web" | "gateway" | "job" | "pipeline";
+export type ResourceKind =
+  | "database"
+  | "queue"
+  | "cache"
+  | "storage"
+  | "external";
+export type EdgeKind = "api" | "dependency" | "event";
+
+/** Whether the entity was auto-discovered or manually created/corrected. */
+export type NodeOrigin = "inferred" | "user";
+
+// --- Layer projections ---
+
+/** K8s source reference for a node in a specific layer. */
+// biome-ignore lint/style/useConsistentTypeDefinitions: ReactFlow's Node generic requires Record<string, unknown>, and only type aliases (not interfaces) have implicit index signatures in TypeScript.
+export type KubernetesSource = {
+  provider: string;
+  apiVersion: string;
+  resource: string;
+  namespace: string;
+  name: string;
+  uid: string;
+};
+
+/** Per-layer data for a node — varies by environment. */
+// biome-ignore lint/style/useConsistentTypeDefinitions: same as above — ReactFlow constraint
+export type NodeProjection = {
+  namespace: string;
+  health: HealthStatus;
+  labels: Record<string, string>;
+  source: KubernetesSource;
+};
+
+/** Per-layer data for an edge — varies by environment. */
+// biome-ignore lint/style/useConsistentTypeDefinitions: same as above — ReactFlow constraint
+export type EdgeProjection = {
+  protocol: string;
+  port?: number;
+  labels: Record<string, string>;
+};
 
 // --- Node data payloads ---
-// biome-ignore lint/style/useConsistentTypeDefinitions: ReactFlow's Node generic requires Record<string, unknown>, and only type aliases (not interfaces) have implicit index signatures in TypeScript.
+
+// biome-ignore lint/style/useConsistentTypeDefinitions: same as above — ReactFlow constraint
 export type ComponentData = {
-  label: string;
-  kind: "Deployment" | "StatefulSet" | "DaemonSet" | "Job" | "CronJob";
-  namespace: string;
-  replicas: { ready: number; desired: number };
-  health: HealthStatus;
+  name: string;
+  kind: ComponentKind;
+  origin: NodeOrigin;
+  layers: Record<string, NodeProjection>;
 };
 
 // biome-ignore lint/style/useConsistentTypeDefinitions: same as above — ReactFlow constraint
 export type ResourceData = {
-  label: string;
-  kind: "Database" | "Cache" | "Queue" | "Storage" | "ExternalService";
-  provider?: string;
-  health: HealthStatus;
+  name: string;
+  kind: ResourceKind;
+  origin: NodeOrigin;
+  layers: Record<string, NodeProjection>;
 };
 
 export type ComponentNode = Node<ComponentData, "component">;
 export type ResourceNode = Node<ResourceData, "resource">;
 export type CanvasNode = ComponentNode | ResourceNode;
 
-// --- Edge data payloads ---
+// --- Edge data payload ---
 
 // biome-ignore lint/style/useConsistentTypeDefinitions: same as above — ReactFlow constraint
-export type TrafficData = {
-  protocol?: string;
-  rps?: number;
-  latencyP99?: number;
-  errorRate?: number;
-  status: EdgeStatus;
+export type TopologyEdgeData = {
+  kind: EdgeKind;
+  origin: NodeOrigin;
+  layers: Record<string, EdgeProjection>;
 };
 
-export type EdgeStatus = "active" | "idle" | "error";
+export type CanvasEdge = Edge<TopologyEdgeData>;
 
-export type CanvasEdge = Edge<TrafficData>;
+// --- Topology response ---
+
+// biome-ignore lint/style/useConsistentTypeDefinitions: same as above — ReactFlow constraint
+export type Topology = {
+  resourceVersion: string;
+  nodes: CanvasNode[];
+  edges: CanvasEdge[];
+};
 
 // --- Theme preset ---
 
@@ -48,8 +99,9 @@ export type EdgeStylePreset = {
   type: EdgeType;
   strokeWidth: number;
   animated: boolean;
-  colors: { active: string; idle: string; error: string };
-  idleDashArray: string;
+  colors: { api: string; dependency: string; event: string };
+  dependencyDashArray: string;
+  eventDashArray: string;
 };
 
 // biome-ignore lint/style/useConsistentTypeDefinitions: consistent with the other data types in this file
@@ -68,7 +120,7 @@ export type ThemePreset = {
   health: {
     healthy: string;
     degraded: string;
-    unhealthy: string;
+    critical: string;
     unknown: string;
   };
   edge: EdgeStylePreset;

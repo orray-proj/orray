@@ -1,17 +1,19 @@
 import type { NodeProps } from "@xyflow/react";
 import { Handle, Position } from "@xyflow/react";
 import type {
+  ComponentKind,
   ComponentNode as ComponentNodeType,
   HealthStatus,
 } from "@/canvas/types";
 import { cn } from "@/lib/utils";
+import { useCanvasStore } from "@/stores/canvas-store";
 
-const KIND_LABELS: Record<ComponentNodeType["data"]["kind"], string> = {
-  Deployment: "deploy",
-  StatefulSet: "sts",
-  DaemonSet: "ds",
-  Job: "job",
-  CronJob: "cron",
+const KIND_LABELS: Record<ComponentKind, string> = {
+  service: "svc",
+  web: "web",
+  gateway: "gw",
+  job: "job",
+  pipeline: "pipe",
 };
 
 function healthColor(status: HealthStatus) {
@@ -22,7 +24,12 @@ export function ComponentNode({
   data,
   selected,
 }: NodeProps<ComponentNodeType>) {
-  const { ready, desired } = data.replicas;
+  const activeLayerId = useCanvasStore((s) => s.activeLayerId);
+  const projection =
+    data.layers[activeLayerId ?? ""] ?? Object.values(data.layers)[0];
+
+  const replicas = projection?.labels?.replicas;
+  const version = projection?.labels?.version;
 
   return (
     <div
@@ -36,20 +43,23 @@ export function ComponentNode({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <span className="orray-node__kind">{KIND_LABELS[data.kind]}</span>
-          <span className="orray-node__label">{data.label}</span>
+          <span className="orray-node__label">{data.name}</span>
         </div>
-        <span
-          className="orray-health-dot"
-          style={{ backgroundColor: healthColor(data.health) }}
-        />
+        {projection && (
+          <span
+            className="orray-health-dot"
+            style={{ backgroundColor: healthColor(projection.health) }}
+          />
+        )}
       </div>
 
-      <div className="orray-node__meta">
-        <span>{data.namespace}</span>
-        <span>
-          {ready}/{desired}
-        </span>
-      </div>
+      {projection && (
+        <div className="orray-node__meta">
+          <span>{projection.namespace}</span>
+          {version && <span>{version}</span>}
+          {!version && replicas && <span>{replicas}r</span>}
+        </div>
+      )}
 
       <Handle
         className="orray-handle"

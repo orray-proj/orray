@@ -1,0 +1,87 @@
+import type { EdgeProps } from "@xyflow/react";
+import {
+  BaseEdge,
+  getBezierPath,
+  getSmoothStepPath,
+  getStraightPath,
+} from "@xyflow/react";
+import type { CanvasEdge } from "@/canvas/types";
+import { useCanvasStore } from "@/stores/canvas-store";
+import { usePresetStore } from "@/stores/preset-store";
+
+export function ApiEdge(props: EdgeProps<CanvasEdge>) {
+  const preset = usePresetStore((s) => s.getActivePreset());
+  const activeLayerId = useCanvasStore((s) => s.activeLayerId);
+  const pathParams = {
+    sourceX: props.sourceX,
+    sourceY: props.sourceY,
+    sourcePosition: props.sourcePosition,
+    targetX: props.targetX,
+    targetY: props.targetY,
+    targetPosition: props.targetPosition,
+  };
+
+  let edgePath: string;
+  let labelX: number;
+  let labelY: number;
+
+  switch (preset.edge.type) {
+    case "smoothstep": {
+      const [path, lx, ly] = getSmoothStepPath(pathParams);
+      edgePath = path;
+      labelX = lx;
+      labelY = ly;
+      break;
+    }
+    case "straight": {
+      const [path, lx, ly] = getStraightPath(pathParams);
+      edgePath = path;
+      labelX = lx;
+      labelY = ly;
+      break;
+    }
+    case "step": {
+      const [path, lx, ly] = getSmoothStepPath({
+        ...pathParams,
+        borderRadius: 0,
+      });
+      edgePath = path;
+      labelX = lx;
+      labelY = ly;
+      break;
+    }
+    default: {
+      const [path, lx, ly] = getBezierPath(pathParams);
+      edgePath = path;
+      labelX = lx;
+      labelY = ly;
+    }
+  }
+
+  const layers = props.data?.layers;
+  const projection = layers?.[activeLayerId ?? Object.keys(layers)[0]];
+
+  return (
+    <>
+      <BaseEdge
+        id={props.id}
+        path={edgePath}
+        style={{
+          stroke: preset.edge.colors.api,
+          strokeWidth: preset.edge.strokeWidth,
+        }}
+      />
+      {projection?.protocol && (
+        <text
+          className="orray-edge-label"
+          dominantBaseline="central"
+          textAnchor="middle"
+          x={labelX}
+          y={labelY}
+        >
+          {projection.protocol}
+        </text>
+      )}
+    </>
+  );
+}

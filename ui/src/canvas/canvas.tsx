@@ -17,21 +17,10 @@ import { useInjectPreset } from "./use-inject-preset";
 import "@/styles/canvas.css";
 
 function CanvasInner() {
-  const {
-    nodes,
-    edges,
-    onNodesChange,
-    onEdgesChange,
-    onConnect,
-    setNodes,
-    setEdges,
-  } = useCanvasStore(
+  const { nodes, edges, setNodes, setEdges } = useCanvasStore(
     useShallow((s) => ({
       nodes: s.nodes,
       edges: s.edges,
-      onNodesChange: s.onNodesChange,
-      onEdgesChange: s.onEdgesChange,
-      onConnect: s.onConnect,
       setNodes: s.setNodes,
       setEdges: s.setEdges,
     }))
@@ -51,14 +40,14 @@ function CanvasInner() {
     <ReactFlow
       colorMode={resolvedTheme}
       edges={edges}
+      edgesReconnectable={false}
       edgeTypes={edgeTypes}
       fitView
       nodes={nodes}
+      nodesConnectable={false}
+      nodesDraggable={false}
       nodeTypes={nodeTypes}
-      onConnect={onConnect}
-      onEdgesChange={onEdgesChange}
       onlyRenderVisibleElements
-      onNodesChange={onNodesChange}
       proOptions={{ hideAttribution: false }}
     >
       <Background color="var(--orray-canvas-dot-color)" gap={20} size={1} />
