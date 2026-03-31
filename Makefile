@@ -94,7 +94,7 @@ go-vet: ## Run go vet.
 
 .PHONY: go-test
 go-test: gen-crds gen-deepcopy go-fmt go-vet ## Run Go tests.
-	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(KUBERNETES_VERSION) -p path)" go test $$(go list ./... | grep -v /api | grep -v /cmd) -coverprofile cover.out
+	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(KUBERNETES_VERSION) -p path)" go test $$(go list ./... | grep -v /cmd) -coverprofile cover.out
 
 custom-gcl:
 	go tool github.com/golangci/golangci-lint/v2/cmd/golangci-lint custom

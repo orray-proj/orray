@@ -29,8 +29,8 @@ spec:
         imagePullPolicy: Always
         env:
         - name: API_URL
-          value: http://orray-api
-        ports:
+          value: http://orray-apiserver
+        port:
         - name: http
           containerPort: 3333
           protocol: TCP

@@ -77,7 +77,7 @@ export const getListCanvasesV1alpha1Url = (params?: ListCanvasesV1alpha1Params,)
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v1alpha1/canvases?${stringifiedParams}` : `/v1alpha1/canvases`
+  return stringifiedParams.length > 0 ? `/api/v1alpha1/canvases?${stringifiedParams}` : `/api/v1alpha1/canvases`
 }
 
 export const listCanvasesV1alpha1 = async (params?: ListCanvasesV1alpha1Params, options?: RequestInit): Promise<listCanvasesV1alpha1Response> => {
@@ -97,7 +97,7 @@ export const listCanvasesV1alpha1 = async (params?: ListCanvasesV1alpha1Params, 
 
 export const getListCanvasesV1alpha1QueryKey = (params?: ListCanvasesV1alpha1Params,) => {
     return [
-    `/v1alpha1/canvases`, ...(params ? [params] : [])
+    `/api/v1alpha1/canvases`, ...(params ? [params] : [])
     ] as const;
     }
 
@@ -201,7 +201,7 @@ export const getCreateCanvasV1alpha1Url = () => {
 
   
 
-  return `/v1alpha1/canvases`
+  return `/api/v1alpha1/canvases`
 }
 
 export const createCanvasV1alpha1 = async (createCanvasRequest: CreateCanvasRequest, options?: RequestInit): Promise<createCanvasV1alpha1Response> => {

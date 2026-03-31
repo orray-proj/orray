@@ -11,7 +11,7 @@ import (
 // AbortWithError sends a standardized error response and aborts the request.
 func AbortWithError(c *gin.Context, statusCode int, code string, message string, details any) {
 	requestID := c.GetString("requestId")
-	
+
 	resp := dto.ErrorResponse{
 		Code:      code,
 		Message:   message,
