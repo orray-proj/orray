@@ -7,6 +7,7 @@ import type {
 } from "@/canvas/types";
 import { cn } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvas-store";
+import { InlineRename } from "./inline-rename";
 
 const KIND_LABELS: Record<ComponentKind, string> = {
   service: "svc",
@@ -22,9 +23,11 @@ function healthColor(status: HealthStatus) {
 
 export function ComponentNode({
   data,
+  id,
   selected,
 }: NodeProps<ComponentNodeType>) {
   const activeLayerId = useCanvasStore((s) => s.activeLayerId);
+  const isRenaming = useCanvasStore((s) => s.renamingNodeId === id);
   const projection =
     data.layers[activeLayerId ?? ""] ?? Object.values(data.layers)[0];
 
@@ -43,7 +46,14 @@ export function ComponentNode({
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <span className="orray-node__kind">{KIND_LABELS[data.kind]}</span>
-          <span className="orray-node__label">{data.name}</span>
+          {isRenaming ? (
+            <InlineRename name={data.name} nodeId={id} />
+          ) : (
+            <span className="orray-node__label">{data.name}</span>
+          )}
+          {data.origin === "inferred" && (
+            <span className="orray-badge--inferred">inferred</span>
+          )}
         </div>
         {projection && (
           <span

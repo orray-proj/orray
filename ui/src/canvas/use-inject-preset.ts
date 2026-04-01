@@ -1,40 +1,40 @@
 import { useEffect } from "react";
+import { useTheme } from "@/lib/theme";
 import { usePresetStore } from "@/stores/preset-store";
+import type { ThemeVariant } from "./types";
 
 const STYLE_ID = "orray-preset-vars";
 
-function injectVars(
-  el: HTMLStyleElement,
-  preset: ReturnType<typeof usePresetStore.getState>["presets"][number]
-) {
+function injectVars(el: HTMLStyleElement, v: ThemeVariant) {
   el.textContent = `:root {
-  --orray-canvas-bg: ${preset.canvas.background};
-  --orray-canvas-dot-color: ${preset.canvas.dotColor};
-  --orray-canvas-dot-size: ${preset.canvas.dotSize};
-  --orray-node-bg: ${preset.node.background};
-  --orray-node-fg: ${preset.node.foreground};
-  --orray-node-border: ${preset.node.border};
-  --orray-node-radius: ${preset.node.borderRadius};
-  --orray-node-shadow: ${preset.node.shadow};
-  --orray-health-healthy: ${preset.health.healthy};
-  --orray-health-degraded: ${preset.health.degraded};
-  --orray-health-critical: ${preset.health.critical};
-  --orray-health-unknown: ${preset.health.unknown};
-  --orray-selection-bg: ${preset.selection.background};
-  --orray-selection-border: ${preset.selection.border};
-  --orray-font-family: ${preset.typography.fontFamily};
-  --orray-node-label-size: ${preset.typography.nodeLabelSize};
-  --orray-minimap-bg: ${preset.minimap.background};
-  --orray-minimap-node: ${preset.minimap.nodeColor};
-  --orray-minimap-mask-opacity: ${preset.minimap.maskOpacity};
+  --orray-canvas-bg: ${v.canvas.background};
+  --orray-canvas-dot-color: ${v.canvas.dotColor};
+  --orray-canvas-dot-size: ${v.canvas.dotSize};
+  --orray-node-bg: ${v.node.background};
+  --orray-node-fg: ${v.node.foreground};
+  --orray-node-border: ${v.node.border};
+  --orray-node-radius: ${v.node.borderRadius};
+  --orray-node-shadow: ${v.node.shadow};
+  --orray-health-healthy: ${v.health.healthy};
+  --orray-health-degraded: ${v.health.degraded};
+  --orray-health-critical: ${v.health.critical};
+  --orray-health-unknown: ${v.health.unknown};
+  --orray-selection-bg: ${v.selection.background};
+  --orray-selection-border: ${v.selection.border};
+  --orray-font-family: ${v.typography.fontFamily};
+  --orray-node-label-size: ${v.typography.nodeLabelSize};
+  --orray-minimap-bg: ${v.minimap.background};
+  --orray-minimap-node: ${v.minimap.nodeColor};
+  --orray-minimap-mask-opacity: ${v.minimap.maskOpacity};
 }`;
 }
 
 export function useInjectPreset() {
-  const getActivePreset = usePresetStore((s) => s.getActivePreset);
-  const activePresetId = usePresetStore((s) => s.activePresetId);
+  const { resolvedTheme } = useTheme();
+  const getVariant = usePresetStore((s) => s.getVariant);
+  const activeThemeId = usePresetStore((s) => s.activeThemeId);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: activePresetId triggers re-injection when the user switches presets
+  // biome-ignore lint/correctness/useExhaustiveDependencies: activeThemeId and resolvedTheme trigger re-injection
   useEffect(() => {
     let style = document.getElementById(STYLE_ID) as HTMLStyleElement | null;
     if (!style) {
@@ -43,11 +43,6 @@ export function useInjectPreset() {
       document.head.appendChild(style);
     }
 
-    const preset = getActivePreset();
-    if (!preset) {
-      return;
-    }
-
-    injectVars(style, preset);
-  }, [activePresetId, getActivePreset]);
+    injectVars(style, getVariant(resolvedTheme));
+  }, [activeThemeId, resolvedTheme, getVariant]);
 }

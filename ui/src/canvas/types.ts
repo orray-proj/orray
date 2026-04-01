@@ -104,11 +104,9 @@ export type EdgeStylePreset = {
   eventDashArray: string;
 };
 
+/** A single color-mode variant (light or dark) of a theme. */
 // biome-ignore lint/style/useConsistentTypeDefinitions: consistent with the other data types in this file
-export type ThemePreset = {
-  id: string;
-  name: string;
-  colorMode: "light" | "dark";
+export type ThemeVariant = {
   canvas: { background: string; dotColor: string; dotSize: number };
   node: {
     background: string;
@@ -127,4 +125,13 @@ export type ThemePreset = {
   selection: { background: string; border: string };
   typography: { fontFamily: string; nodeLabelSize: string };
   minimap: { background: string; nodeColor: string; maskOpacity: number };
+};
+
+/** A named theme with both light and dark variants. */
+// biome-ignore lint/style/useConsistentTypeDefinitions: consistent with the other data types in this file
+export type CanvasTheme = {
+  id: string;
+  name: string;
+  light: ThemeVariant;
+  dark: ThemeVariant;
 };

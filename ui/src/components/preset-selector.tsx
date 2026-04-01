@@ -9,33 +9,33 @@ import {
 import { usePresetStore } from "@/stores/preset-store";
 
 export function PresetSelector() {
-  const presets = usePresetStore((s) => s.presets);
-  const activePresetId = usePresetStore((s) => s.activePresetId);
-  const setActivePreset = usePresetStore((s) => s.setActivePreset);
+  const themes = usePresetStore((s) => s.themes);
+  const activeThemeId = usePresetStore((s) => s.activeThemeId);
+  const setActiveTheme = usePresetStore((s) => s.setActiveTheme);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size="icon" variant="ghost">
           <PaletteIcon className="h-4 w-4" />
-          <span className="sr-only">Theme preset</span>
+          <span className="sr-only">Theme</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {presets.map((preset) => (
+        {themes.map((theme) => (
           <DropdownMenuItem
-            key={preset.id}
-            onClick={() => setActivePreset(preset.id)}
+            key={theme.id}
+            onClick={() => setActiveTheme(theme.id)}
           >
             <span
               className="mr-2 inline-block h-3 w-3 rounded-full border"
               style={{
-                backgroundColor: preset.canvas.background,
-                borderColor: preset.node.border,
+                backgroundColor: theme.dark.canvas.background,
+                borderColor: theme.dark.node.border,
               }}
             />
-            {preset.name}
-            {preset.id === activePresetId && (
+            {theme.name}
+            {theme.id === activeThemeId && (
               <span className="ml-auto text-xs opacity-50">active</span>
             )}
           </DropdownMenuItem>

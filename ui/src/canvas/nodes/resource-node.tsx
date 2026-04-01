@@ -7,6 +7,7 @@ import type {
 } from "@/canvas/types";
 import { cn } from "@/lib/utils";
 import { useCanvasStore } from "@/stores/canvas-store";
+import { InlineRename } from "./inline-rename";
 
 const KIND_LABELS: Record<ResourceKind, string> = {
   database: "db",
@@ -20,8 +21,13 @@ function healthColor(status: HealthStatus) {
   return `var(--orray-health-${status})`;
 }
 
-export function ResourceNode({ data, selected }: NodeProps<ResourceNodeType>) {
+export function ResourceNode({
+  data,
+  id,
+  selected,
+}: NodeProps<ResourceNodeType>) {
   const activeLayerId = useCanvasStore((s) => s.activeLayerId);
+  const isRenaming = useCanvasStore((s) => s.renamingNodeId === id);
   const projection =
     data.layers[activeLayerId ?? ""] ?? Object.values(data.layers)[0];
 
@@ -39,7 +45,14 @@ export function ResourceNode({ data, selected }: NodeProps<ResourceNodeType>) {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 overflow-hidden">
           <span className="orray-node__kind">{KIND_LABELS[data.kind]}</span>
-          <span className="orray-node__label">{data.name}</span>
+          {isRenaming ? (
+            <InlineRename name={data.name} nodeId={id} />
+          ) : (
+            <span className="orray-node__label">{data.name}</span>
+          )}
+          {data.origin === "inferred" && (
+            <span className="orray-badge--inferred">inferred</span>
+          )}
         </div>
         {projection && (
           <span

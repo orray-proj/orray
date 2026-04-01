@@ -5,6 +5,10 @@
   "nav": {
     "home": "Home"
   },
+  "settings": {
+    "appearance": "Aspetto",
+    "theme": "Tema"
+  },
   "theme": {
     "toggle": "Cambia tema",
     "light": "Chiaro",
@@ -12,18 +16,20 @@
     "system": "Sistema"
   },
   "language": {
-    "select": "Seleziona lingua",
+    "select": "Lingua",
     "en": "English",
     "it": "Italiano"
   },
   "canvas": {
-    "title": "Interfaccia Piattaforma Spaziale"
+    "title": "Interfaccia Piattaforma Spaziale",
+    "autoDiscovered": "Auto-scoperto",
+    "services": "servizi",
+    "connections": "connessioni",
+    "commit": "Conferma",
+    "edit": "Modifica",
+    "inferred": "inferito"
   },
   "preset": {
-    "label": "Preset tema",
-    "defaultLight": "Chiaro predefinito",
-    "defaultDark": "Scuro predefinito",
-    "highContrast": "Alto contrasto",
-    "blueprint": "Blueprint"
+    "label": "Preset tema"
   }
 }

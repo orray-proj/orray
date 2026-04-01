@@ -5,6 +5,10 @@
   "nav": {
     "home": "Home"
   },
+  "settings": {
+    "appearance": "Appearance",
+    "theme": "Theme"
+  },
   "theme": {
     "toggle": "Toggle theme",
     "light": "Light",
@@ -12,18 +16,20 @@
     "system": "System"
   },
   "language": {
-    "select": "Select language",
+    "select": "Language",
     "en": "English",
     "it": "Italiano"
   },
   "canvas": {
-    "title": "Spatial Platform Interface"
+    "title": "Spatial Platform Interface",
+    "autoDiscovered": "Auto-discovered",
+    "services": "services",
+    "connections": "connections",
+    "commit": "Commit",
+    "edit": "Edit",
+    "inferred": "inferred"
   },
   "preset": {
-    "label": "Theme preset",
-    "defaultLight": "Default Light",
-    "defaultDark": "Default Dark",
-    "highContrast": "High Contrast",
-    "blueprint": "Blueprint"
+    "label": "Theme preset"
   }
 }

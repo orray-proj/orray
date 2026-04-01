@@ -1,9 +1,6 @@
-import type { ThemePreset } from "./types";
+import type { CanvasTheme, ThemeVariant } from "./types";
 
-export const defaultLightPreset: ThemePreset = {
-  id: "default-light",
-  name: "Default Light",
-  colorMode: "light",
+const defaultLight: ThemeVariant = {
   canvas: {
     background: "oklch(0.985 0 0)",
     dotColor: "oklch(0.87 0 0)",
@@ -38,10 +35,7 @@ export const defaultLightPreset: ThemePreset = {
     background: "oklch(0.88 0.05 250 / 0.15)",
     border: "oklch(0.6 0.15 250)",
   },
-  typography: {
-    fontFamily: "system-ui, sans-serif",
-    nodeLabelSize: "13px",
-  },
+  typography: { fontFamily: "system-ui, sans-serif", nodeLabelSize: "13px" },
   minimap: {
     background: "oklch(0.97 0 0)",
     nodeColor: "oklch(0.85 0 0)",
@@ -49,10 +43,7 @@ export const defaultLightPreset: ThemePreset = {
   },
 };
 
-export const defaultDarkPreset: ThemePreset = {
-  id: "default-dark",
-  name: "Default Dark",
-  colorMode: "dark",
+const defaultDark: ThemeVariant = {
   canvas: {
     background: "oklch(0.145 0 0)",
     dotColor: "oklch(0.25 0 0)",
@@ -87,10 +78,7 @@ export const defaultDarkPreset: ThemePreset = {
     background: "oklch(0.5 0.1 250 / 0.2)",
     border: "oklch(0.6 0.15 250)",
   },
-  typography: {
-    fontFamily: "system-ui, sans-serif",
-    nodeLabelSize: "13px",
-  },
+  typography: { fontFamily: "system-ui, sans-serif", nodeLabelSize: "13px" },
   minimap: {
     background: "oklch(0.18 0 0)",
     nodeColor: "oklch(0.35 0 0)",
@@ -98,10 +86,47 @@ export const defaultDarkPreset: ThemePreset = {
   },
 };
 
-export const highContrastPreset: ThemePreset = {
-  id: "high-contrast",
-  name: "High Contrast",
-  colorMode: "dark",
+const highContrastLight: ThemeVariant = {
+  canvas: {
+    background: "oklch(1 0 0)",
+    dotColor: "oklch(0.85 0 0)",
+    dotSize: 1,
+  },
+  node: {
+    background: "oklch(0.98 0 0)",
+    foreground: "oklch(0 0 0)",
+    border: "oklch(0.3 0 0)",
+    borderRadius: "0.25rem",
+    shadow: "none",
+  },
+  health: {
+    healthy: "oklch(0.45 0.25 145)",
+    degraded: "oklch(0.55 0.22 85)",
+    critical: "oklch(0.5 0.3 27)",
+    unknown: "oklch(0.4 0 0)",
+  },
+  edge: {
+    type: "smoothstep",
+    strokeWidth: 2.5,
+    animated: false,
+    colors: {
+      api: "oklch(0.15 0 0)",
+      dependency: "oklch(0.5 0 0)",
+      event: "oklch(0.3 0.12 250)",
+    },
+    dependencyDashArray: "4 4",
+    eventDashArray: "8 4",
+  },
+  selection: { background: "oklch(0 0 0 / 0.08)", border: "oklch(0 0 0)" },
+  typography: { fontFamily: "system-ui, sans-serif", nodeLabelSize: "14px" },
+  minimap: {
+    background: "oklch(0.95 0 0)",
+    nodeColor: "oklch(0.4 0 0)",
+    maskOpacity: 0.1,
+  },
+};
+
+const highContrastDark: ThemeVariant = {
   canvas: {
     background: "oklch(0.05 0 0)",
     dotColor: "oklch(0.25 0 0)",
@@ -132,14 +157,8 @@ export const highContrastPreset: ThemePreset = {
     dependencyDashArray: "4 4",
     eventDashArray: "8 4",
   },
-  selection: {
-    background: "oklch(1 0 0 / 0.12)",
-    border: "oklch(1 0 0)",
-  },
-  typography: {
-    fontFamily: "system-ui, sans-serif",
-    nodeLabelSize: "14px",
-  },
+  selection: { background: "oklch(1 0 0 / 0.12)", border: "oklch(1 0 0)" },
+  typography: { fontFamily: "system-ui, sans-serif", nodeLabelSize: "14px" },
   minimap: {
     background: "oklch(0.08 0 0)",
     nodeColor: "oklch(0.6 0 0)",
@@ -147,10 +166,53 @@ export const highContrastPreset: ThemePreset = {
   },
 };
 
-export const blueprintPreset: ThemePreset = {
-  id: "blueprint",
-  name: "Blueprint",
-  colorMode: "dark",
+const blueprintLight: ThemeVariant = {
+  canvas: {
+    background: "oklch(0.92 0.02 250)",
+    dotColor: "oklch(0.8 0.04 250)",
+    dotSize: 1,
+  },
+  node: {
+    background: "oklch(0.95 0.02 250)",
+    foreground: "oklch(0.2 0.04 250)",
+    border: "oklch(0.6 0.08 250)",
+    borderRadius: "0.125rem",
+    shadow: "none",
+  },
+  health: {
+    healthy: "oklch(0.55 0.17 170)",
+    degraded: "oklch(0.6 0.17 85)",
+    critical: "oklch(0.5 0.24 27)",
+    unknown: "oklch(0.5 0.04 250)",
+  },
+  edge: {
+    type: "step",
+    strokeWidth: 1.5,
+    animated: false,
+    colors: {
+      api: "oklch(0.4 0.08 250)",
+      dependency: "oklch(0.65 0.05 250)",
+      event: "oklch(0.45 0.1 200)",
+    },
+    dependencyDashArray: "4 6",
+    eventDashArray: "8 4",
+  },
+  selection: {
+    background: "oklch(0.45 0.1 250 / 0.15)",
+    border: "oklch(0.4 0.12 250)",
+  },
+  typography: {
+    fontFamily: "'SF Mono', 'Fira Code', ui-monospace, monospace",
+    nodeLabelSize: "12px",
+  },
+  minimap: {
+    background: "oklch(0.88 0.02 250)",
+    nodeColor: "oklch(0.6 0.06 250)",
+    maskOpacity: 0.1,
+  },
+};
+
+const blueprintDark: ThemeVariant = {
   canvas: {
     background: "oklch(0.22 0.04 250)",
     dotColor: "oklch(0.35 0.05 250)",
@@ -196,9 +258,27 @@ export const blueprintPreset: ThemePreset = {
   },
 };
 
-export const builtinPresets: ThemePreset[] = [
-  defaultLightPreset,
-  defaultDarkPreset,
-  highContrastPreset,
-  blueprintPreset,
+export const defaultTheme: CanvasTheme = {
+  id: "default",
+  name: "Default",
+  light: defaultLight,
+  dark: defaultDark,
+};
+export const highContrastTheme: CanvasTheme = {
+  id: "high-contrast",
+  name: "High Contrast",
+  light: highContrastLight,
+  dark: highContrastDark,
+};
+export const blueprintTheme: CanvasTheme = {
+  id: "blueprint",
+  name: "Blueprint",
+  light: blueprintLight,
+  dark: blueprintDark,
+};
+
+export const builtinThemes: CanvasTheme[] = [
+  defaultTheme,
+  highContrastTheme,
+  blueprintTheme,
 ];

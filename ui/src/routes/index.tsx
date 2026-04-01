@@ -1,17 +1,10 @@
-import { createRoute } from "@tanstack/react-router";
-import { Canvas } from "@/canvas/canvas";
+import { createRoute, Navigate } from "@tanstack/react-router";
 import { routeTree } from "./__root";
 
 export const indexRoute = createRoute({
   getParentRoute: () => routeTree,
   path: "/",
-  component: IndexPage,
+  component: () => (
+    <Navigate params={{ canvasId: "default" }} to="/canvas/$canvasId" />
+  ),
 });
-
-function IndexPage() {
-  return (
-    <div className="h-[calc(100vh-3rem)] w-full">
-      <Canvas />
-    </div>
-  );
-}

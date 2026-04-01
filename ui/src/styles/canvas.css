@@ -61,12 +61,40 @@
   white-space: nowrap;
 }
 
+.orray-node__label--editing {
+  all: unset;
+  width: auto;
+  overflow: hidden;
+  font-family: var(--orray-font-family);
+  font-size: var(--orray-node-label-size);
+  font-weight: 500;
+  color: var(--orray-node-fg);
+  white-space: nowrap;
+  outline: none;
+  background: transparent;
+  border-bottom: 1px solid var(--orray-selection-border);
+}
+
 .orray-node__meta {
   display: flex;
   justify-content: space-between;
   margin-top: 4px;
   font-size: 11px;
   opacity: 0.6;
+}
+
+/* --- Inferred badge --- */
+.orray-badge--inferred {
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--orray-node-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--orray-node-border);
+  border-radius: 2px;
+  opacity: 0.4;
 }
 
 /* --- Health dot --- */
@@ -95,4 +123,119 @@
 
 .orray-edge-label--subtle {
   opacity: 0.35;
+}
+
+/* --- Floating panels --- */
+.orray-floating-panel {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 12px;
+  font-family: var(--orray-font-family);
+  font-size: 12px;
+  color: var(--orray-node-fg);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  background: var(--orray-node-bg);
+  border: 1px solid var(--orray-node-border);
+  border-radius: var(--orray-node-radius);
+  box-shadow: var(--orray-node-shadow);
+}
+
+.orray-floating-panel:active {
+  cursor: grabbing;
+}
+
+.orray-floating-panel--compact {
+  gap: 2px;
+  padding: 2px 4px;
+}
+
+.orray-floating-panel__separator {
+  flex-shrink: 0;
+  width: 1px;
+  height: 14px;
+  background: var(--orray-node-border);
+}
+
+.orray-floating-panel__action {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--orray-node-bg);
+  cursor: pointer;
+  background: var(--orray-node-fg);
+  border: none;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+
+.orray-floating-panel__action:hover {
+  opacity: 0.8;
+}
+
+/* --- Settings button (anchored, outside ReactFlow) --- */
+.orray-settings-anchor {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 20;
+}
+
+.orray-settings-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  color: var(--orray-node-fg);
+  cursor: pointer;
+  background: var(--orray-node-bg);
+  border: 1px solid var(--orray-node-border);
+  border-radius: 50%;
+  box-shadow: var(--orray-node-shadow);
+  transition: opacity 0.15s;
+}
+
+.orray-settings-trigger:hover {
+  opacity: 0.8;
+}
+
+/* --- Context menu --- */
+.orray-context-menu {
+  z-index: 50;
+  min-width: 160px;
+  padding: 4px;
+  font-family: var(--orray-font-family);
+  font-size: 12px;
+  color: var(--orray-node-fg);
+  background: var(--orray-node-bg);
+  border: 1px solid var(--orray-node-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px oklch(0 0 0 / 0.15);
+}
+
+.orray-context-menu__item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  outline: none;
+  border-radius: 4px;
+}
+
+.orray-context-menu__item:hover,
+.orray-context-menu__item[data-highlighted] {
+  background: var(--orray-node-border);
+}
+
+.orray-context-menu__item--destructive {
+  color: var(--orray-health-critical);
 }

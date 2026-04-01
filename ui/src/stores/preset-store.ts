@@ -1,38 +1,42 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { builtinPresets, defaultLightPreset } from "@/canvas/presets";
-import type { ThemePreset } from "@/canvas/types";
+import { builtinThemes, defaultTheme } from "@/canvas/presets";
+import type { CanvasTheme, ThemeVariant } from "@/canvas/types";
 
 interface PresetState {
-  activePresetId: string;
-  getActivePreset: () => ThemePreset;
-  presets: ThemePreset[];
-  setActivePreset: (id: string) => void;
+  activeThemeId: string;
+  getActiveTheme: () => CanvasTheme;
+  getVariant: (colorMode: "light" | "dark") => ThemeVariant;
+  setActiveTheme: (id: string) => void;
+  themes: CanvasTheme[];
 }
 
 export const usePresetStore = create<PresetState>()(
   persist(
     (set, get) => ({
-      activePresetId: defaultLightPreset.id,
-      presets: builtinPresets,
+      activeThemeId: defaultTheme.id,
+      themes: builtinThemes,
 
-      setActivePreset: (id: string) => {
-        const exists = get().presets.some((p) => p.id === id);
+      setActiveTheme: (id: string) => {
+        const exists = get().themes.some((t) => t.id === id);
         if (exists) {
-          set({ activePresetId: id });
+          set({ activeThemeId: id });
         }
       },
 
-      getActivePreset: () => {
-        const { presets, activePresetId } = get();
-        return (
-          presets.find((p) => p.id === activePresetId) ?? defaultLightPreset
-        );
+      getActiveTheme: () => {
+        const { themes, activeThemeId } = get();
+        return themes.find((t) => t.id === activeThemeId) ?? defaultTheme;
+      },
+
+      getVariant: (colorMode: "light" | "dark") => {
+        const theme = get().getActiveTheme();
+        return theme[colorMode];
       },
     }),
     {
       name: "orray-preset",
-      partialize: (state) => ({ activePresetId: state.activePresetId }),
+      partialize: (state) => ({ activeThemeId: state.activeThemeId }),
     }
   )
 );

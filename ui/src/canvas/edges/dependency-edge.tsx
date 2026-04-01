@@ -6,11 +6,11 @@ import {
   getStraightPath,
 } from "@xyflow/react";
 import type { CanvasEdge } from "@/canvas/types";
+import { useActiveVariant } from "@/canvas/use-active-variant";
 import { useCanvasStore } from "@/stores/canvas-store";
-import { usePresetStore } from "@/stores/preset-store";
 
 export function DependencyEdge(props: EdgeProps<CanvasEdge>) {
-  const preset = usePresetStore((s) => s.getActivePreset());
+  const preset = useActiveVariant();
   const activeLayerId = useCanvasStore((s) => s.activeLayerId);
   const pathParams = {
     sourceX: props.sourceX,
