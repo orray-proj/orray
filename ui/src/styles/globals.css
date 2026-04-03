@@ -122,3 +122,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide native scrollbars but keep scrolling */
+.scrollbar-hidden {
+  scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}

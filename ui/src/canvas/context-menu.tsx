@@ -10,6 +10,7 @@ import {
 } from "@radix-ui/react-context-menu";
 import { useReactFlow } from "@xyflow/react";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { ComponentKind, ResourceKind } from "@/canvas/types";
 import { useCanvasStore } from "@/stores/canvas-store";
 
@@ -33,6 +34,7 @@ interface CanvasContextMenuProps {
 }
 
 export function CanvasContextMenu({ children }: CanvasContextMenuProps) {
+  const { t } = useTranslation();
   const phase = useCanvasStore((s) => s.phase);
   const updateNodeData = useCanvasStore((s) => s.updateNodeData);
   const removeEdge = useCanvasStore((s) => s.removeEdge);
@@ -113,11 +115,11 @@ export function CanvasContextMenu({ children }: CanvasContextMenuProps) {
                   className="orray-context-menu__item"
                   onSelect={() => setRenamingNodeId(target.id)}
                 >
-                  Rename
+                  {t("context.rename")}
                 </Item>
                 <Sub>
                   <SubTrigger className="orray-context-menu__item">
-                    Reclassify
+                    {t("context.reclassify")}
                   </SubTrigger>
                   <Portal>
                     <SubContent className="orray-context-menu">
@@ -141,7 +143,7 @@ export function CanvasContextMenu({ children }: CanvasContextMenuProps) {
                 className="orray-context-menu__item orray-context-menu__item--destructive"
                 onSelect={() => removeEdge(target.id)}
               >
-                Mark as incorrect
+                {t("context.markIncorrect")}
               </Item>
             )}
           </Content>

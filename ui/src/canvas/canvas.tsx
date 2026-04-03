@@ -16,9 +16,6 @@ import { createMockTopology } from "./mock-data";
 import { nodeTypes } from "./nodes/node-types";
 import { EditButton } from "./panels/edit-button";
 import { ReviewPanel } from "./panels/review-panel";
-import { SettingsButton } from "./panels/settings-panel";
-import { useInjectPreset } from "./use-inject-preset";
-import "@/styles/canvas.css";
 
 function CanvasInner() {
   const { nodes, edges, phase, onNodesChange, setNodes, setEdges } =
@@ -34,7 +31,6 @@ function CanvasInner() {
     );
 
   const { resolvedTheme } = useTheme();
-  useInjectPreset();
 
   useEffect(() => {
     const mock = createMockTopology();
@@ -68,7 +64,6 @@ function CanvasInner() {
           {phase === "reviewing" && <ReviewPanel />}
           {phase === "committed" && <EditButton />}
         </ReactFlow>
-        <SettingsButton />
       </div>
     </CanvasContextMenu>
   );

@@ -48,32 +48,17 @@ export function SettingsButton() {
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setTheme("light");
-                  }}
-                >
+                <DropdownMenuItem onSelect={() => setTheme("light")}>
                   <SunIcon />
                   {t("theme.light")}
                   {theme === "light" && <CheckMark />}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setTheme("dark");
-                  }}
-                >
+                <DropdownMenuItem onSelect={() => setTheme("dark")}>
                   <MoonIcon />
                   {t("theme.dark")}
                   {theme === "dark" && <CheckMark />}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setTheme("system");
-                  }}
-                >
+                <DropdownMenuItem onSelect={() => setTheme("system")}>
                   <MonitorIcon />
                   {t("theme.system")}
                   {theme === "system" && <CheckMark />}
@@ -92,10 +77,7 @@ export function SettingsButton() {
                 {themes.map((canvasTheme) => (
                   <DropdownMenuItem
                     key={canvasTheme.id}
-                    onSelect={(e) => {
-                      e.preventDefault();
-                      setActiveTheme(canvasTheme.id);
-                    }}
+                    onSelect={() => setActiveTheme(canvasTheme.id)}
                   >
                     <span
                       className="inline-block h-3 w-3 rounded-full border"
@@ -124,8 +106,7 @@ export function SettingsButton() {
                 {languages.map((lang) => (
                   <DropdownMenuItem
                     key={lang.code}
-                    onSelect={(e) => {
-                      e.preventDefault();
+                    onSelect={() => {
                       i18n.changeLanguage(lang.code);
                       localStorage.setItem("orray-locale", lang.code);
                     }}
