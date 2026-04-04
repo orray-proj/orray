@@ -34,6 +34,9 @@ func (s *Server) setupRESTRouter() {
 	{
 		v1alpha1.GET("/canvases", s.listCanvasesV1alpha1)
 		v1alpha1.POST("/canvases", s.createCanvasV1alpha1)
+
+		v1alpha1.GET("/canvases/:id/layers", s.listLayersV1alpha1)
+		v1alpha1.POST("/canvases/:id/layers", s.createLayerV1alpha1)
 	}
 
 	s.router = router

@@ -144,7 +144,9 @@ func (r *Reconciler) syncNamespace(ctx context.Context, canvas *v1alpha1.Canvas,
 	return nil
 }
 
-func (r *Reconciler) reconcileDelete(ctx context.Context, canvas *v1alpha1.Canvas, log *logging.Logger) (ctrl.Result, error) {
+func (r *Reconciler) reconcileDelete(
+	ctx context.Context, canvas *v1alpha1.Canvas, log *logging.Logger,
+) (ctrl.Result, error) {
 	if !controllerutil.ContainsFinalizer(canvas, v1alpha1.FinalizerCanvas) {
 		return ctrl.Result{}, nil
 	}

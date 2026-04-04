@@ -41,6 +41,7 @@ type Server struct {
 	clientset  kubernetes.Interface
 
 	canvasService api.CanvasService
+	layerService  api.LayerService
 }
 
 // NewServer creates a new REST API server.
@@ -59,6 +60,7 @@ func NewServer(
 		kubeClient:    kubeClient,
 		clientset:     clientset,
 		canvasService: api.NewCanvasService(kubeClient),
+		layerService:  api.NewLayerService(kubeClient),
 	}
 
 	server.setupRESTRouter()

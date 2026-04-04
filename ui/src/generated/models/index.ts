@@ -8,7 +8,11 @@
 
 export * from './canvas';
 export * from './createCanvasRequest';
+export * from './createLayerRequest';
 export * from './errorResponse';
+export * from './layer';
 export * from './listCanvasesV1alpha1Params';
+export * from './listLayersV1alpha1Params';
 export * from './listResponseCanvas';
+export * from './listResponseLayer';
 export * from './pagination';

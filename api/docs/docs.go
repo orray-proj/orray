@@ -118,6 +118,127 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1alpha1/canvases/{id}/layers": {
+            "get": {
+                "description": "List all the layers belonging to a specific canvas",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Layer"
+                ],
+                "summary": "List all layers for a canvas",
+                "operationId": "ListLayersV1alpha1",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Canvas ID (UID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "Limit is the maximum number of items to return.",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "Offset is the number of items to skip.",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ListResponse-Layer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create a new layer for a specific canvas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Layer"
+                ],
+                "summary": "Create a new layer",
+                "operationId": "CreateLayerV1alpha1",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Canvas ID (UID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Layer data",
+                        "name": "layer",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/CreateLayerRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/Layer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -154,6 +275,31 @@ const docTemplate = `{
                 }
             }
         },
+        "CreateLayerRequest": {
+            "type": "object",
+            "required": [
+                "color",
+                "name",
+                "namespaces"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "namespaces": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "ErrorResponse": {
             "type": "object",
             "properties": {
@@ -174,6 +320,36 @@ const docTemplate = `{
                 }
             }
         },
+        "Layer": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "color": {
+                    "description": "Color is a color used to recognize the layer among other layers.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description is an optional description of the layer.\n+optional",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "namespaces": {
+                    "description": "Namespaces is a list of namespaces that belong to this layer.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "ListResponse-Canvas": {
             "type": "object",
             "properties": {
@@ -182,6 +358,26 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/Canvas"
+                    }
+                },
+                "pagination": {
+                    "description": "Pagination contains the metadata for the current page.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/Pagination"
+                        }
+                    ]
+                }
+            }
+        },
+        "ListResponse-Layer": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "description": "Items is the slice of data being returned.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Layer"
                     }
                 },
                 "pagination": {

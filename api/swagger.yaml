@@ -22,6 +22,23 @@ definitions:
     - displayName
     - name
     type: object
+  CreateLayerRequest:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      namespaces:
+        items:
+          type: string
+        type: array
+    required:
+    - color
+    - name
+    - namespaces
+    type: object
   ErrorResponse:
     properties:
       code:
@@ -37,12 +54,47 @@ definitions:
           debugging.
         type: string
     type: object
+  Layer:
+    properties:
+      color:
+        description: Color is a color used to recognize the layer among other layers.
+        type: string
+      description:
+        description: |-
+          Description is an optional description of the layer.
+          +optional
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      namespaces:
+        description: Namespaces is a list of namespaces that belong to this layer.
+        items:
+          type: string
+        type: array
+    required:
+    - id
+    - name
+    type: object
   ListResponse-Canvas:
     properties:
       items:
         description: Items is the slice of data being returned.
         items:
           $ref: '#/definitions/Canvas'
+        type: array
+      pagination:
+        allOf:
+        - $ref: '#/definitions/Pagination'
+        description: Pagination contains the metadata for the current page.
+    type: object
+  ListResponse-Layer:
+    properties:
+      items:
+        description: Items is the slice of data being returned.
+        items:
+          $ref: '#/definitions/Layer'
         type: array
       pagination:
         allOf:
@@ -139,4 +191,86 @@ paths:
       summary: Create a new canvas
       tags:
       - Canvas
+  /v1alpha1/canvases/{id}/layers:
+    get:
+      description: List all the layers belonging to a specific canvas
+      operationId: ListLayersV1alpha1
+      parameters:
+      - description: Canvas ID (UID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Limit is the maximum number of items to return.
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: Offset is the number of items to skip.
+        in: query
+        minimum: 0
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/ListResponse-Layer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: List all layers for a canvas
+      tags:
+      - Layer
+    post:
+      consumes:
+      - application/json
+      description: Create a new layer for a specific canvas
+      operationId: CreateLayerV1alpha1
+      parameters:
+      - description: Canvas ID (UID)
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Layer data
+        in: body
+        name: layer
+        required: true
+        schema:
+          $ref: '#/definitions/CreateLayerRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Layer'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Create a new layer
+      tags:
+      - Layer
 swagger: "2.0"
