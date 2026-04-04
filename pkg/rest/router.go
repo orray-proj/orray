@@ -33,6 +33,7 @@ func (s *Server) setupRESTRouter() {
 	v1alpha1 := api.Group("/v1alpha1")
 	{
 		v1alpha1.GET("/canvases", s.listCanvasesV1alpha1)
+		v1alpha1.POST("/canvases", s.createCanvasV1alpha1)
 	}
 
 	s.router = router
