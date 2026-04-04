@@ -6,16 +6,20 @@
  * OpenAPI spec version: 1.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
@@ -30,7 +34,6 @@ import type {
   ListLayersV1alpha1Params,
   ListResponseCanvas,
   ListResponseLayer
-  ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
 } from './models';
 
 import { fetcher } from '../lib/fetcher';
@@ -43,7 +46,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary List all canvases
  */
 export type listCanvasesV1alpha1Response200 = {
-  data: ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
+  data: ListResponseCanvas
   status: 200
 }
 
@@ -202,7 +205,7 @@ export const getCreateCanvasV1alpha1Url = () => {
 
   
 
-  return `/v1alpha1/canvases`
+  return `/api/v1alpha1/canvases`
 }
 
 export const createCanvasV1alpha1 = async (createCanvasRequest: CreateCanvasRequest, options?: RequestInit): Promise<createCanvasV1alpha1Response> => {
@@ -311,7 +314,7 @@ export const getListLayersV1alpha1Url = (id: string,
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v1alpha1/canvases/${id}/layers?${stringifiedParams}` : `/v1alpha1/canvases/${id}/layers`
+  return stringifiedParams.length > 0 ? `/api/v1alpha1/canvases/${id}/layers?${stringifiedParams}` : `/api/v1alpha1/canvases/${id}/layers`
 }
 
 export const listLayersV1alpha1 = async (id: string,
@@ -333,7 +336,7 @@ export const listLayersV1alpha1 = async (id: string,
 export const getListLayersV1alpha1QueryKey = (id: string,
     params?: ListLayersV1alpha1Params,) => {
     return [
-    `/v1alpha1/canvases/${id}/layers`, ...(params ? [params] : [])
+    `/api/v1alpha1/canvases/${id}/layers`, ...(params ? [params] : [])
     ] as const;
     }
 
@@ -447,7 +450,7 @@ export const getCreateLayerV1alpha1Url = (id: string,) => {
 
   
 
-  return `/v1alpha1/canvases/${id}/layers`
+  return `/api/v1alpha1/canvases/${id}/layers`
 }
 
 export const createLayerV1alpha1 = async (id: string,
