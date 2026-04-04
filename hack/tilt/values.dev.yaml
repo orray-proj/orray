@@ -1,6 +1,11 @@
 crds:
   install: true
 
+apiserver:
+  logLevel: DEBUG
+  tls:
+    enabled: false
+
 controller:
   logLevel: DEBUG
 

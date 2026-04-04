@@ -1,0 +1,32 @@
+{{- if .Values.apiserver.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: orray-apiserver
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "orray.labels" . | nindent 4 }}
+    {{- include "orray.apiserver.labels" . | nindent 4 }}
+  {{- with (mergeOverwrite (deepCopy .Values.global.annotations) .Values.apiserver.service.annotations) }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.apiserver.service.type }}
+  ports:
+  - protocol: TCP
+    {{- if .Values.apiserver.tls.enabled }}
+    port: 443
+    {{- else }}
+    port: 80
+    {{- end }}
+    {{- if and (or (eq .Values.apiserver.service.type "NodePort") (eq .Values.apiserver.service.type "LoadBalancer")) .Values.apiserver.service.nodePort}}
+    nodePort: {{ .Values.apiserver.service.nodePort }}
+    {{- end }}
+    targetPort: 8080
+  selector:
+    {{- include "orray.selectorLabels" . | nindent 4 }}
+    {{- include "orray.apiserver.labels" . | nindent 4 }}
+{{- end }}

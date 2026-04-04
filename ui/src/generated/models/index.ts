@@ -11,4 +11,5 @@ export * from './createCanvasRequest';
 export * from './errorResponse';
 export * from './listCanvasesV1alpha1Params';
 export * from './listResponseCanvas';
+export * from './listResponseGithubComOrrayProjOrrayPkgRestDtoCanvas';
 export * from './pagination';

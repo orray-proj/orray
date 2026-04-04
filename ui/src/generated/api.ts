@@ -6,30 +6,24 @@
  * OpenAPI spec version: 1.0
  */
 import {
-  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
-  Canvas,
-  CreateCanvasRequest,
   ErrorResponse,
   ListCanvasesV1alpha1Params,
-  ListResponseCanvas
+  ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
 } from './models';
 
 import { fetcher } from '../lib/fetcher';
@@ -42,7 +36,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary List all canvases
  */
 export type listCanvasesV1alpha1Response200 = {
-  data: ListResponseCanvas
+  data: ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
   status: 200
 }
 
@@ -77,7 +71,7 @@ export const getListCanvasesV1alpha1Url = (params?: ListCanvasesV1alpha1Params,)
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v1alpha1/canvases?${stringifiedParams}` : `/v1alpha1/canvases`
+  return stringifiedParams.length > 0 ? `/api/v1alpha1/canvases?${stringifiedParams}` : `/api/v1alpha1/canvases`
 }
 
 export const listCanvasesV1alpha1 = async (params?: ListCanvasesV1alpha1Params, options?: RequestInit): Promise<listCanvasesV1alpha1Response> => {
@@ -97,7 +91,7 @@ export const listCanvasesV1alpha1 = async (params?: ListCanvasesV1alpha1Params, 
 
 export const getListCanvasesV1alpha1QueryKey = (params?: ListCanvasesV1alpha1Params,) => {
     return [
-    `/v1alpha1/canvases`, ...(params ? [params] : [])
+    `/api/v1alpha1/canvases`, ...(params ? [params] : [])
     ] as const;
     }
 
@@ -163,103 +157,3 @@ export function useListCanvasesV1alpha1<TData = Awaited<ReturnType<typeof listCa
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-
-
-
-
-/**
- * Create a new canvas with the given display name
- * @summary Create a new canvas
- */
-export type createCanvasV1alpha1Response201 = {
-  data: Canvas
-  status: 201
-}
-
-export type createCanvasV1alpha1Response400 = {
-  data: ErrorResponse
-  status: 400
-}
-
-export type createCanvasV1alpha1Response500 = {
-  data: ErrorResponse
-  status: 500
-}
-
-export type createCanvasV1alpha1ResponseSuccess = (createCanvasV1alpha1Response201) & {
-  headers: Headers;
-};
-export type createCanvasV1alpha1ResponseError = (createCanvasV1alpha1Response400 | createCanvasV1alpha1Response500) & {
-  headers: Headers;
-};
-
-export type createCanvasV1alpha1Response = (createCanvasV1alpha1ResponseSuccess | createCanvasV1alpha1ResponseError)
-
-export const getCreateCanvasV1alpha1Url = () => {
-
-
-  
-
-  return `/v1alpha1/canvases`
-}
-
-export const createCanvasV1alpha1 = async (createCanvasRequest: CreateCanvasRequest, options?: RequestInit): Promise<createCanvasV1alpha1Response> => {
-  
-  return fetcher<createCanvasV1alpha1Response>(getCreateCanvasV1alpha1Url(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      createCanvasRequest,)
-  }
-);}
-  
-
-
-
-export const getCreateCanvasV1alpha1MutationOptions = <TError = ErrorResponse,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCanvasV1alpha1>>, TError,{data: CreateCanvasRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
-): UseMutationOptions<Awaited<ReturnType<typeof createCanvasV1alpha1>>, TError,{data: CreateCanvasRequest}, TContext> => {
-
-const mutationKey = ['createCanvasV1alpha1'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCanvasV1alpha1>>, {data: CreateCanvasRequest}> = (props) => {
-          const {data} = props ?? {};
-
-          return  createCanvasV1alpha1(data,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateCanvasV1alpha1MutationResult = NonNullable<Awaited<ReturnType<typeof createCanvasV1alpha1>>>
-    export type CreateCanvasV1alpha1MutationBody = CreateCanvasRequest
-    export type CreateCanvasV1alpha1MutationError = ErrorResponse
-
-    /**
- * @summary Create a new canvas
- */
-export const useCreateCanvasV1alpha1 = <TError = ErrorResponse,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCanvasV1alpha1>>, TError,{data: CreateCanvasRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createCanvasV1alpha1>>,
-        TError,
-        {data: CreateCanvasRequest},
-        TContext
-      > => {
-      return useMutation(getCreateCanvasV1alpha1MutationOptions(options), queryClient);
-    }

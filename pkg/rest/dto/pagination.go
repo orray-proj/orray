@@ -38,21 +38,14 @@ func NewListResponse[T any](items []T, total int64, limit, offset int) ListRespo
 	}
 }
 
-// Paginate takes a full slice of items and a PaginationRequest, 
+// Paginate takes a full slice of items and a PaginationRequest,
 // applies the slicing, and returns a ListResponse with mapped items.
 // This is useful for in-memory pagination (e.g. from Kubernetes client results).
 func Paginate[T any, R any](items []T, req PaginationRequest, mapper func(T) R) ListResponse[R] {
 	total := int64(len(items))
-	
-	start := req.Offset
-	if start > int(total) {
-		start = int(total)
-	}
-	
-	end := start + req.Limit
-	if end > int(total) {
-		end = int(total)
-	}
+
+	start := min(req.Offset, int(total))
+	end := min(start+req.Limit, int(total))
 
 	result := MapSlice(items[start:end], mapper)
 	return NewListResponse(result, total, req.Limit, req.Offset)

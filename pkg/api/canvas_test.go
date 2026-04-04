@@ -26,7 +26,7 @@ func TestCanvasService(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, canvas)
 		assert.Equal(t, displayName, canvas.Spec.DisplayName)
-		assert.Equal(t, name, canvas.ObjectMeta.Name)
+		assert.Equal(t, name, canvas.Name)
 	})
 
 	t.Run("List Canvases", func(t *testing.T) {
