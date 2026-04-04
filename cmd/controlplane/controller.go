@@ -15,6 +15,7 @@ import (
 	"github.com/orray-proj/orray/pkg/controller/canvas"
 	"github.com/orray-proj/orray/pkg/controller/layer"
 	"github.com/orray-proj/orray/pkg/kubernetes"
+	"github.com/orray-proj/orray/pkg/kubernetes/indexer"
 	versionpkg "github.com/orray-proj/orray/pkg/version"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -82,7 +83,7 @@ func (c *controller) run(ctx context.Context) error {
 }
 
 // setupControllerManager sets up the controller manager.
-func (c *controller) setupControllerManager(_ context.Context) (manager.Manager, error) {
+func (c *controller) setupControllerManager(ctx context.Context) (manager.Manager, error) {
 	logger := c.Logger
 
 	logger.Debug("loading in-cluster REST config")
@@ -139,7 +140,11 @@ func (c *controller) setupControllerManager(_ context.Context) (manager.Manager,
 		return nil, fmt.Errorf("failed to create controller manager: %w", err)
 	}
 
-	// TODO: add indexer
+	// Register Indexers
+	if err := indexer.NewCanvasIndexer(mgr).Index(ctx); err != nil {
+		return nil, fmt.Errorf("failed to register canvas indexer: %w", err)
+	}
+
 	return mgr, nil
 }
 
