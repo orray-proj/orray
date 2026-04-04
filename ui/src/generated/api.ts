@@ -6,20 +6,16 @@
  * OpenAPI spec version: 1.0
  */
 import {
-  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
-  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
-  UseMutationOptions,
-  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
@@ -34,6 +30,7 @@ import type {
   ListLayersV1alpha1Params,
   ListResponseCanvas,
   ListResponseLayer
+  ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
 } from './models';
 
 import { fetcher } from '../lib/fetcher';
@@ -46,7 +43,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary List all canvases
  */
 export type listCanvasesV1alpha1Response200 = {
-  data: ListResponseCanvas
+  data: ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
   status: 200
 }
 
@@ -81,7 +78,7 @@ export const getListCanvasesV1alpha1Url = (params?: ListCanvasesV1alpha1Params,)
 
   const stringifiedParams = normalizedParams.toString();
 
-  return stringifiedParams.length > 0 ? `/v1alpha1/canvases?${stringifiedParams}` : `/v1alpha1/canvases`
+  return stringifiedParams.length > 0 ? `/api/v1alpha1/canvases?${stringifiedParams}` : `/api/v1alpha1/canvases`
 }
 
 export const listCanvasesV1alpha1 = async (params?: ListCanvasesV1alpha1Params, options?: RequestInit): Promise<listCanvasesV1alpha1Response> => {
@@ -101,7 +98,7 @@ export const listCanvasesV1alpha1 = async (params?: ListCanvasesV1alpha1Params, 
 
 export const getListCanvasesV1alpha1QueryKey = (params?: ListCanvasesV1alpha1Params,) => {
     return [
-    `/v1alpha1/canvases`, ...(params ? [params] : [])
+    `/api/v1alpha1/canvases`, ...(params ? [params] : [])
     ] as const;
     }
 

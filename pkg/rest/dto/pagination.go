@@ -45,7 +45,6 @@ func Paginate[T any, R any](items []T, req PaginationRequest, mapper func(T) R) 
 	total := int64(len(items))
 
 	start := min(req.Offset, int(total))
-
 	end := min(start+req.Limit, int(total))
 
 	result := MapSlice(items[start:end], mapper)

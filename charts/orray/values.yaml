@@ -136,6 +136,15 @@ apiserver:
     ## @param apiserver.reconcilers.maxConcurrentReconciles specifies the maximum number of resources EACH of the apiserver's reconcilers can reconcile concurrently. This setting may also be overridden on a per-reconciler basis.
     maxConcurrentReconciles: 4
 
+  ## API Server service specific settings
+  service:
+    ## @param apiserver.service.annotations Speficies custom annotations to apply to the apiserver's service
+    annotations: {}
+    ## @param apiserver.service.type Specifies what is the type of the apiserver's service
+    type: ClusterIP
+    ## @param apiserver.service.nodePort [nullable] Host port the `Service` will be mapped to when `type` is either `NodePort` or `LoadBalancer`. If not specified, Kubernetes chooses.
+    # nodePort:
+
   ## @param apiserver.securityContext Security context for apiserver pods. Defaults to `global.securityContext`.
   securityContext: {}
 
@@ -144,6 +153,16 @@ apiserver:
 
   ## @param apiserver.logFormat The log format for the apiserver. Available options: console, json. Defaults to 'console'.
   logFormat: console
+
+  tls:
+    ## @param apiserver.tls.enabled Whether to enable TLS directly on the API server. This is helpful if you do not intend to use an ingress controller or if you require TLS end-to-end. All other settings in this section EXCEPT `terminatedUpstream` will be ignored when this is set to `false`.
+    enabled: true
+    ## @param apiserver.tls.selfSignedCert Whether to generate a self-signed certificate for use by the API server. If `true`, `cert-manager` CRDs **must** be present in the cluster. The chart will create and use its own namespaced `Issuer`. If `false`, a cert `Secret` with the name specified by `api.tls.secretName` **must** be provided in the same namespace as Orray. The value in this field has no effect if `api.tls.enabled` is `false`.
+    selfSignedCert: true
+    ## @param apiserver.tls.secretName Name of the cert `Secret` to use for the API server. When `api.tls.selfSignedCert` is `true`, this will be the name of the generated cert `Secret`. When `api.tls.selfSignedCert` is `false`, a cert `Secret` with this name **must** be provided in the same namespace as Orray. The value in this field has no effect if `api.tls.enabled` is `false`.
+    secretName: orray-apiserver-cert
+    ## @param apiserver.tls.terminatedUpstream Whether TLS is terminated upstream, i.e. a load balancer, reverse-proxy, or an `Ingress` controller using a single wildcard cert is terminating it. Setting this to `true` forces all API server URLs to use HTTPS even if the `Ingress` (if applicable) or API server itself are listening for plain HTTP requests.
+    terminatedUpstream: false
 
   ## @param apiserver.resources Resources limits and requests for the apiserver containers.
   resources: {}
