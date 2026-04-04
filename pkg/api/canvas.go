@@ -67,17 +67,16 @@ func (s *canvasService) Get(ctx context.Context, name string) (*orrayv1alpha1.Ca
 
 // GetByID retrieves a Canvas resource by ID (UID).
 func (s *canvasService) GetByID(ctx context.Context, id string) (*orrayv1alpha1.Canvas, error) {
-	list, err := s.List(ctx)
-	if err != nil {
+	list := &orrayv1alpha1.CanvasList{}
+	if err := s.kubeClient.List(ctx, list, client.MatchingFields{"metadata.uid": id}); err != nil {
 		return nil, err
 	}
 
-	for i := range list.Items {
-		if string(list.Items[i].UID) == id {
-			return &list.Items[i], nil
-		}
+	if len(list.Items) == 0 {
+		return nil, fmt.Errorf("canvas not found with id %s", id)
 	}
-	return nil, fmt.Errorf("canvas not found with id %s", id)
+
+	return &list.Items[0], nil
 }
 
 // Delete deletes a Canvas resource by name.
