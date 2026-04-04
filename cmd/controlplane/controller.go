@@ -13,6 +13,7 @@ import (
 
 	"github.com/orray-proj/orray/api/v1alpha1"
 	"github.com/orray-proj/orray/pkg/controller/canvas"
+	"github.com/orray-proj/orray/pkg/controller/layer"
 	"github.com/orray-proj/orray/pkg/kubernetes"
 	versionpkg "github.com/orray-proj/orray/pkg/version"
 	"github.com/spf13/cobra"
@@ -67,6 +68,14 @@ func (c *controller) run(ctx context.Context) error {
 		Logger: c.Logger,
 	}).SetupWithManager(mgr); err != nil {
 		return fmt.Errorf("failed to setup canvas reconciler: %w", err)
+	}
+
+	// Register Layer Reconciler
+	if err = (&layer.Reconciler{
+		Client: mgr.GetClient(),
+		Logger: c.Logger,
+	}).SetupWithManager(mgr); err != nil {
+		return fmt.Errorf("failed to setup layer reconciler: %w", err)
 	}
 
 	return startControllerManager(ctx, mgr)

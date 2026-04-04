@@ -17,6 +17,7 @@ import (
 	"github.com/orray-proj/orray/pkg/kubernetes"
 	versionpkg "github.com/orray-proj/orray/pkg/version"
 	"github.com/orray-proj/orray/pkg/webhook/canvas"
+	"github.com/orray-proj/orray/pkg/webhook/layer"
 	"github.com/spf13/cobra"
 	"k8s.io/apimachinery/pkg/runtime"
 )
@@ -101,6 +102,11 @@ func (k *kubernetesWebhooksServer) run(ctx context.Context) error {
 	// Register Canvas Webhook
 	if err := canvas.NewCanvasWebhook(k.Logger).SetupWebhookWithManager(mgr); err != nil {
 		return fmt.Errorf("failed to setup canvas webhook: %w", err)
+	}
+
+	// Register Layer Webhook
+	if err := layer.NewLayerWebhook(mgr.GetClient(), k.Logger).SetupWebhookWithManager(mgr); err != nil {
+		return fmt.Errorf("failed to setup layer webhook: %w", err)
 	}
 
 	return k.startWebhooksServer(ctx, mgr)

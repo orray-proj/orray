@@ -29,6 +29,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(GroupVersion,
 		&Canvas{},
 		&CanvasList{},
+		&Layer{},
+		&LayerList{},
 	)
 	metav1.AddToGroupVersion(scheme, GroupVersion)
 	return nil
