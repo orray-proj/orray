@@ -8,7 +8,7 @@ const getBaseUrl = (): string => {
     return import.meta.env.VITE_API_URL;
   }
   // In production, API is typically on the same origin
-  return '';
+  return "";
 };
 
 // Custom mutator: orval's react-query client defaults to axios.

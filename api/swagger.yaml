@@ -12,16 +12,6 @@ definitions:
     - id
     - name
     type: object
-  CreateCanvasRequest:
-    properties:
-      displayName:
-        type: string
-      name:
-        type: string
-    required:
-    - displayName
-    - name
-    type: object
   ErrorResponse:
     properties:
       code:
@@ -37,7 +27,7 @@ definitions:
           debugging.
         type: string
     type: object
-  ListResponse-Canvas:
+  ListResponse-github_com_orray-proj_orray_pkg_rest_dto_Canvas:
     properties:
       items:
         description: Items is the slice of data being returned.
@@ -97,7 +87,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ListResponse-Canvas'
+            $ref: '#/definitions/ListResponse-github_com_orray-proj_orray_pkg_rest_dto_Canvas'
         "400":
           description: Bad Request
           schema:
@@ -107,36 +97,6 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       summary: List all canvases
-      tags:
-      - Canvas
-    post:
-      consumes:
-      - application/json
-      description: Create a new canvas with the given display name
-      operationId: CreateCanvasV1alpha1
-      parameters:
-      - description: Canvas data
-        in: body
-        name: canvas
-        required: true
-        schema:
-          $ref: '#/definitions/CreateCanvasRequest'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/Canvas'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      summary: Create a new canvas
       tags:
       - Canvas
 swagger: "2.0"

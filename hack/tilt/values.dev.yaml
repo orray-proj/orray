@@ -1,7 +1,7 @@
 crds:
   install: true
 
-api:
+apiserver:
   logLevel: DEBUG
   tls:
     enabled: false
@@ -10,4 +10,4 @@ controller:
   logLevel: DEBUG
 
 webhooksServer:
- logLevel: DEBUG
+  logLevel: DEBUG

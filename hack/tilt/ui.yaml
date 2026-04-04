@@ -30,7 +30,7 @@ spec:
         env:
         - name: API_URL
           value: http://orray-apiserver
-        port:
+        ports:
         - name: http
           containerPort: 3333
           protocol: TCP

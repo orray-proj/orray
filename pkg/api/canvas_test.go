@@ -6,6 +6,7 @@ import (
 
 	orrayv1alpha1 "github.com/orray-proj/orray/api/v1alpha1"
 	"github.com/stretchr/testify/assert"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
@@ -14,20 +15,14 @@ func TestCanvasService(t *testing.T) {
 	scheme := runtime.NewScheme()
 	_ = orrayv1alpha1.AddToScheme(scheme)
 
-	fakeClient := fake.NewClientBuilder().WithScheme(scheme).Build()
+	seed := &orrayv1alpha1.Canvas{
+		ObjectMeta: metav1.ObjectMeta{Name: "test"},
+		Spec:       orrayv1alpha1.CanvasSpec{DisplayName: "Test Canvas"},
+	}
+
+	fakeClient := fake.NewClientBuilder().WithScheme(scheme).WithObjects(seed).Build()
 	service := NewCanvasService(fakeClient)
 	ctx := context.Background()
-
-	t.Run("Create Canvas", func(t *testing.T) {
-		name := "test"
-		displayName := "Test Canvas"
-		canvas, err := service.Create(ctx, name, displayName)
-
-		assert.NoError(t, err)
-		assert.NotNil(t, canvas)
-		assert.Equal(t, displayName, canvas.Spec.DisplayName)
-		assert.Equal(t, name, canvas.Name)
-	})
 
 	t.Run("List Canvases", func(t *testing.T) {
 		list, err := service.List(ctx)
@@ -39,21 +34,15 @@ func TestCanvasService(t *testing.T) {
 	})
 
 	t.Run("Get Canvas", func(t *testing.T) {
-		list, _ := service.List(ctx)
-		name := list.Items[0].Name
-
-		canvas, err := service.Get(ctx, name)
+		canvas, err := service.Get(ctx, "test")
 
 		assert.NoError(t, err)
 		assert.NotNil(t, canvas)
-		assert.Equal(t, name, canvas.Name)
+		assert.Equal(t, "test", canvas.Name)
 	})
 
 	t.Run("Delete Canvas", func(t *testing.T) {
-		list, _ := service.List(ctx)
-		name := list.Items[0].Name
-
-		err := service.Delete(ctx, name)
+		err := service.Delete(ctx, "test")
 		assert.NoError(t, err)
 
 		newList, _ := service.List(ctx)

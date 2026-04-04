@@ -6,7 +6,7 @@ export default defineConfig({
     output: {
       target: "./src/generated/api.ts",
       schemas: "./src/generated/models",
-      baseUrl: '/api',
+      baseUrl: "/api",
       mode: "single",
       client: "react-query",
       override: {

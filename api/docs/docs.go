@@ -56,52 +56,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ListResponse-Canvas"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new canvas with the given display name",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Canvas"
-                ],
-                "summary": "Create a new canvas",
-                "operationId": "CreateCanvasV1alpha1",
-                "parameters": [
-                    {
-                        "description": "Canvas data",
-                        "name": "canvas",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/CreateCanvasRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/Canvas"
+                            "$ref": "#/definitions/ListResponse-github_com_orray-proj_orray_pkg_rest_dto_Canvas"
                         }
                     },
                     "400": {
@@ -139,21 +94,6 @@ const docTemplate = `{
                 }
             }
         },
-        "CreateCanvasRequest": {
-            "type": "object",
-            "required": [
-                "displayName",
-                "name"
-            ],
-            "properties": {
-                "displayName": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "ErrorResponse": {
             "type": "object",
             "properties": {
@@ -174,7 +114,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ListResponse-Canvas": {
+        "ListResponse-github_com_orray-proj_orray_pkg_rest_dto_Canvas": {
             "type": "object",
             "properties": {
                 "items": {
