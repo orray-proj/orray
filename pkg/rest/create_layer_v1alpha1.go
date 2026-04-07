@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	orrayv1alpha1 "github.com/orray-proj/orray/api/v1alpha1"
 	"github.com/orray-proj/orray/pkg/rest/dto"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
 // @id CreateLayerV1alpha1
@@ -36,8 +37,13 @@ func (s *Server) createLayerV1alpha1(c *gin.Context) {
 
 	canvas, err := s.canvasService.GetByID(c.Request.Context(), id)
 	if err != nil {
+		if apierrors.IsNotFound(err) {
+			NotFound(c, "canvas not found")
+			return
+		}
+
 		s.logger.Error(err, "failed to get canvas by id", "id", id)
-		NotFound(c, "canvas not found")
+		InternalServerError(c, err, "failed to get canvas")
 		return
 	}
 

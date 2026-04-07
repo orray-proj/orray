@@ -2,10 +2,11 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	orrayv1alpha1 "github.com/orray-proj/orray/api/v1alpha1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -73,7 +74,13 @@ func (s *canvasService) GetByID(ctx context.Context, id string) (*orrayv1alpha1.
 	}
 
 	if len(list.Items) == 0 {
-		return nil, fmt.Errorf("canvas not found with id %s", id)
+		return nil, apierrors.NewNotFound(
+			schema.GroupResource{
+				Group:    orrayv1alpha1.GroupVersion.Group,
+				Resource: "canvases",
+			},
+			id,
+		)
 	}
 
 	return &list.Items[0], nil
