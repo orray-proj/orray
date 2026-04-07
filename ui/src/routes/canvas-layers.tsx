@@ -25,8 +25,9 @@ import {
   SearchIcon,
   XIcon,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { createLayerV1alpha1, useListLayersV1alpha1 } from "@/generated/api";
 import { useCanvasStore } from "@/stores/canvas-store";
 import { routeTree } from "./__root";
 
@@ -66,10 +67,23 @@ const NS_META_MAP = new Map(MOCK_NAMESPACES.map((ns) => [ns.name, ns]));
 const STAGING_ID = "__staging__";
 const CREATE_LAYER_ID = "__create_layer__";
 
+const DEFAULT_COLORS = [
+  "#6366f1",
+  "#f59e0b",
+  "#10b981",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+  "#06b6d4",
+  "#f97316",
+];
+
 interface Layer {
+  color: string;
   id: string;
   name: string;
   namespaces: string[];
+  persisted: boolean;
 }
 
 type ActiveDrag =
@@ -82,11 +96,45 @@ function CanvasLayersPage() {
   const navigate = useNavigate();
   const setPhase = useCanvasStore((s) => s.setPhase);
   const [layers, setLayers] = useState<Layer[]>([
-    { id: "layer:default", name: "Default", namespaces: ["default"] },
+    {
+      id: "layer:default",
+      name: "Default",
+      namespaces: ["default"],
+      color: DEFAULT_COLORS[0],
+      persisted: false,
+    },
   ]);
   const [activeDrag, setActiveDrag] = useState<ActiveDrag>(null);
   const [newLayerId, setNewLayerId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [initialized, setInitialized] = useState(false);
+
+  // Load existing layers from BE
+  const { data: layersResponse } = useListLayersV1alpha1("default", undefined, {
+    query: { retry: false },
+  });
+
+  // Populate local state from API response (once)
+  useEffect(() => {
+    if (initialized || !layersResponse) {
+      return;
+    }
+    const apiLayers =
+      layersResponse.status === 200 ? layersResponse.data.items : undefined;
+    if (apiLayers && apiLayers.length > 0) {
+      setLayers(
+        apiLayers.map((l, i) => ({
+          id: l.id,
+          name: l.name,
+          namespaces: l.namespaces ?? [],
+          color: l.color ?? DEFAULT_COLORS[i % DEFAULT_COLORS.length],
+          persisted: true,
+        }))
+      );
+    }
+    setInitialized(true);
+  }, [layersResponse, initialized]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -179,13 +227,14 @@ function CanvasLayersPage() {
 
     if (over.id === CREATE_LAYER_ID) {
       const newId = `layer:${crypto.randomUUID().slice(0, 8)}`;
+      const color = DEFAULT_COLORS[layers.length % DEFAULT_COLORS.length];
       setLayers([
         ...layers.map((l) =>
           l.id === fromId
             ? { ...l, namespaces: l.namespaces.filter((n) => n !== ns) }
             : l
         ),
-        { id: newId, name: "", namespaces: [ns] },
+        { id: newId, name: "", namespaces: [ns], color, persisted: false },
       ]);
       setNewLayerId(newId);
       return;
@@ -207,7 +256,11 @@ function CanvasLayersPage() {
 
   function addLayer() {
     const id = `layer:${crypto.randomUUID().slice(0, 8)}`;
-    setLayers([...layers, { id, name: "", namespaces: [] }]);
+    const color = DEFAULT_COLORS[layers.length % DEFAULT_COLORS.length];
+    setLayers([
+      ...layers,
+      { id, name: "", namespaces: [], color, persisted: false },
+    ]);
     setNewLayerId(id);
   }
 
@@ -219,10 +272,29 @@ function CanvasLayersPage() {
     setLayers(layers.map((l) => (l.id === layerId ? { ...l, name } : l)));
   }
 
-  function handleContinue() {
+  const handleContinue = useCallback(async () => {
+    setSaving(true);
+    try {
+      // Persist new layers to the backend
+      const toCreate = layers.filter(
+        (l) => !l.persisted && l.namespaces.length > 0
+      );
+      await Promise.allSettled(
+        toCreate.map((l) =>
+          createLayerV1alpha1("default", {
+            name: l.name || "Unnamed",
+            namespaces: l.namespaces,
+            color: l.color,
+          })
+        )
+      );
+    } catch {
+      // Proceed even if API is unavailable (mock mode)
+    }
+    setSaving(false);
     setPhase("reviewing");
     navigate({ to: "/canvas/$canvasId", params: { canvasId: "default" } });
-  }
+  }, [layers, setPhase, navigate]);
 
   const activeMeta =
     activeDrag?.type === "namespace"
@@ -297,6 +369,7 @@ function CanvasLayersPage() {
                     >
                       <LayerHeader
                         autoFocus={layer.id === newLayerId}
+                        color={layer.color}
                         count={layer.namespaces.length}
                         layerId={layer.id}
                         name={layer.name}
@@ -380,11 +453,12 @@ function CanvasLayersPage() {
 
       <div className="flex items-center justify-end gap-3 border-border border-t px-8 py-4">
         <button
-          className="rounded-md bg-foreground px-6 py-2 font-medium text-background text-sm transition-opacity hover:opacity-80"
+          className="rounded-md bg-foreground px-6 py-2 font-medium text-background text-sm transition-opacity hover:opacity-80 disabled:opacity-40"
+          disabled={saving}
           onClick={handleContinue}
           type="button"
         >
-          {t("common.continue")}
+          {saving ? "..." : t("common.continue")}
         </button>
       </div>
     </div>
@@ -528,6 +602,7 @@ function DroppableZone({
 
 function LayerHeader({
   autoFocus,
+  color,
   count,
   layerId,
   name,
@@ -535,6 +610,7 @@ function LayerHeader({
   onRename,
 }: {
   autoFocus: boolean;
+  color: string;
   count: number;
   layerId: string;
   name: string;
@@ -554,6 +630,10 @@ function LayerHeader({
 
   return (
     <div className="flex items-center justify-between gap-2">
+      <span
+        className="h-3 w-3 shrink-0 rounded-full"
+        style={{ backgroundColor: color }}
+      />
       <input
         className="min-w-0 flex-1 rounded-lg bg-transparent px-2 py-1 font-medium text-sm outline-none placeholder:opacity-30 hover:bg-muted focus:bg-muted"
         onChange={(e) => onRename(layerId, e.target.value)}
