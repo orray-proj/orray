@@ -4,7 +4,9 @@ import (
 	"context"
 
 	orrayv1alpha1 "github.com/orray-proj/orray/api/v1alpha1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -13,6 +15,7 @@ type CanvasService interface {
 	Create(ctx context.Context, name, displayName string) (*orrayv1alpha1.Canvas, error)
 	List(ctx context.Context) (*orrayv1alpha1.CanvasList, error)
 	Get(ctx context.Context, name string) (*orrayv1alpha1.Canvas, error)
+	GetByID(ctx context.Context, id string) (*orrayv1alpha1.Canvas, error)
 	Delete(ctx context.Context, name string) error
 }
 
@@ -61,6 +64,26 @@ func (s *canvasService) Get(ctx context.Context, name string) (*orrayv1alpha1.Ca
 		return nil, err
 	}
 	return canvas, nil
+}
+
+// GetByID retrieves a Canvas resource by ID (UID).
+func (s *canvasService) GetByID(ctx context.Context, id string) (*orrayv1alpha1.Canvas, error) {
+	list := &orrayv1alpha1.CanvasList{}
+	if err := s.kubeClient.List(ctx, list, client.MatchingFields{"metadata.uid": id}); err != nil {
+		return nil, err
+	}
+
+	if len(list.Items) == 0 {
+		return nil, apierrors.NewNotFound(
+			schema.GroupResource{
+				Group:    orrayv1alpha1.GroupVersion.Group,
+				Resource: "canvases",
+			},
+			id,
+		)
+	}
+
+	return &list.Items[0], nil
 }
 
 // Delete deletes a Canvas resource by name.

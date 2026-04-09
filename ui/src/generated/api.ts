@@ -6,24 +6,34 @@
  * OpenAPI spec version: 1.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
+  Canvas,
+  CreateCanvasRequest,
+  CreateLayerRequest,
   ErrorResponse,
+  Layer,
   ListCanvasesV1alpha1Params,
-  ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
+  ListLayersV1alpha1Params,
+  ListResponseCanvas,
+  ListResponseLayer
 } from './models';
 
 import { fetcher } from '../lib/fetcher';
@@ -36,7 +46,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
  * @summary List all canvases
  */
 export type listCanvasesV1alpha1Response200 = {
-  data: ListResponseGithubComOrrayProjOrrayPkgRestDtoCanvas
+  data: ListResponseCanvas
   status: 200
 }
 
@@ -157,3 +167,349 @@ export function useListCanvasesV1alpha1<TData = Awaited<ReturnType<typeof listCa
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
+/**
+ * Create a new canvas with the given display name
+ * @summary Create a new canvas
+ */
+export type createCanvasV1alpha1Response201 = {
+  data: Canvas
+  status: 201
+}
+
+export type createCanvasV1alpha1Response400 = {
+  data: ErrorResponse
+  status: 400
+}
+
+export type createCanvasV1alpha1Response500 = {
+  data: ErrorResponse
+  status: 500
+}
+
+export type createCanvasV1alpha1ResponseSuccess = (createCanvasV1alpha1Response201) & {
+  headers: Headers;
+};
+export type createCanvasV1alpha1ResponseError = (createCanvasV1alpha1Response400 | createCanvasV1alpha1Response500) & {
+  headers: Headers;
+};
+
+export type createCanvasV1alpha1Response = (createCanvasV1alpha1ResponseSuccess | createCanvasV1alpha1ResponseError)
+
+export const getCreateCanvasV1alpha1Url = () => {
+
+
+  
+
+  return `/api/v1alpha1/canvases`
+}
+
+export const createCanvasV1alpha1 = async (createCanvasRequest: CreateCanvasRequest, options?: RequestInit): Promise<createCanvasV1alpha1Response> => {
+  
+  return fetcher<createCanvasV1alpha1Response>(getCreateCanvasV1alpha1Url(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      createCanvasRequest,)
+  }
+);}
+  
+
+
+
+export const getCreateCanvasV1alpha1MutationOptions = <TError = ErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCanvasV1alpha1>>, TError,{data: CreateCanvasRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof createCanvasV1alpha1>>, TError,{data: CreateCanvasRequest}, TContext> => {
+
+const mutationKey = ['createCanvasV1alpha1'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCanvasV1alpha1>>, {data: CreateCanvasRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createCanvasV1alpha1(data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateCanvasV1alpha1MutationResult = NonNullable<Awaited<ReturnType<typeof createCanvasV1alpha1>>>
+    export type CreateCanvasV1alpha1MutationBody = CreateCanvasRequest
+    export type CreateCanvasV1alpha1MutationError = ErrorResponse
+
+    /**
+ * @summary Create a new canvas
+ */
+export const useCreateCanvasV1alpha1 = <TError = ErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCanvasV1alpha1>>, TError,{data: CreateCanvasRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createCanvasV1alpha1>>,
+        TError,
+        {data: CreateCanvasRequest},
+        TContext
+      > => {
+      return useMutation(getCreateCanvasV1alpha1MutationOptions(options), queryClient);
+    }
+    
+/**
+ * List all the layers belonging to a specific canvas
+ * @summary List all layers for a canvas
+ */
+export type listLayersV1alpha1Response200 = {
+  data: ListResponseLayer
+  status: 200
+}
+
+export type listLayersV1alpha1Response400 = {
+  data: ErrorResponse
+  status: 400
+}
+
+export type listLayersV1alpha1Response404 = {
+  data: ErrorResponse
+  status: 404
+}
+
+export type listLayersV1alpha1Response500 = {
+  data: ErrorResponse
+  status: 500
+}
+
+export type listLayersV1alpha1ResponseSuccess = (listLayersV1alpha1Response200) & {
+  headers: Headers;
+};
+export type listLayersV1alpha1ResponseError = (listLayersV1alpha1Response400 | listLayersV1alpha1Response404 | listLayersV1alpha1Response500) & {
+  headers: Headers;
+};
+
+export type listLayersV1alpha1Response = (listLayersV1alpha1ResponseSuccess | listLayersV1alpha1ResponseError)
+
+export const getListLayersV1alpha1Url = (id: string,
+    params?: ListLayersV1alpha1Params,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1alpha1/canvases/${id}/layers?${stringifiedParams}` : `/api/v1alpha1/canvases/${id}/layers`
+}
+
+export const listLayersV1alpha1 = async (id: string,
+    params?: ListLayersV1alpha1Params, options?: RequestInit): Promise<listLayersV1alpha1Response> => {
+  
+  return fetcher<listLayersV1alpha1Response>(getListLayersV1alpha1Url(id,params),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+  
+
+
+
+
+export const getListLayersV1alpha1QueryKey = (id: string,
+    params?: ListLayersV1alpha1Params,) => {
+    return [
+    `/api/v1alpha1/canvases/${id}/layers`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+    
+export const getListLayersV1alpha1QueryOptions = <TData = Awaited<ReturnType<typeof listLayersV1alpha1>>, TError = ErrorResponse>(id: string,
+    params?: ListLayersV1alpha1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listLayersV1alpha1>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListLayersV1alpha1QueryKey(id,params);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listLayersV1alpha1>>> = ({ signal }) => listLayersV1alpha1(id,params, { signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listLayersV1alpha1>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type ListLayersV1alpha1QueryResult = NonNullable<Awaited<ReturnType<typeof listLayersV1alpha1>>>
+export type ListLayersV1alpha1QueryError = ErrorResponse
+
+
+export function useListLayersV1alpha1<TData = Awaited<ReturnType<typeof listLayersV1alpha1>>, TError = ErrorResponse>(
+ id: string,
+    params: undefined |  ListLayersV1alpha1Params, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof listLayersV1alpha1>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listLayersV1alpha1>>,
+          TError,
+          Awaited<ReturnType<typeof listLayersV1alpha1>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListLayersV1alpha1<TData = Awaited<ReturnType<typeof listLayersV1alpha1>>, TError = ErrorResponse>(
+ id: string,
+    params?: ListLayersV1alpha1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listLayersV1alpha1>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof listLayersV1alpha1>>,
+          TError,
+          Awaited<ReturnType<typeof listLayersV1alpha1>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useListLayersV1alpha1<TData = Awaited<ReturnType<typeof listLayersV1alpha1>>, TError = ErrorResponse>(
+ id: string,
+    params?: ListLayersV1alpha1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listLayersV1alpha1>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary List all layers for a canvas
+ */
+
+export function useListLayersV1alpha1<TData = Awaited<ReturnType<typeof listLayersV1alpha1>>, TError = ErrorResponse>(
+ id: string,
+    params?: ListLayersV1alpha1Params, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof listLayersV1alpha1>>, TError, TData>>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getListLayersV1alpha1QueryOptions(id,params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+/**
+ * Create a new layer for a specific canvas
+ * @summary Create a new layer
+ */
+export type createLayerV1alpha1Response201 = {
+  data: Layer
+  status: 201
+}
+
+export type createLayerV1alpha1Response400 = {
+  data: ErrorResponse
+  status: 400
+}
+
+export type createLayerV1alpha1Response404 = {
+  data: ErrorResponse
+  status: 404
+}
+
+export type createLayerV1alpha1Response500 = {
+  data: ErrorResponse
+  status: 500
+}
+
+export type createLayerV1alpha1ResponseSuccess = (createLayerV1alpha1Response201) & {
+  headers: Headers;
+};
+export type createLayerV1alpha1ResponseError = (createLayerV1alpha1Response400 | createLayerV1alpha1Response404 | createLayerV1alpha1Response500) & {
+  headers: Headers;
+};
+
+export type createLayerV1alpha1Response = (createLayerV1alpha1ResponseSuccess | createLayerV1alpha1ResponseError)
+
+export const getCreateLayerV1alpha1Url = (id: string,) => {
+
+
+  
+
+  return `/api/v1alpha1/canvases/${id}/layers`
+}
+
+export const createLayerV1alpha1 = async (id: string,
+    createLayerRequest: CreateLayerRequest, options?: RequestInit): Promise<createLayerV1alpha1Response> => {
+  
+  return fetcher<createLayerV1alpha1Response>(getCreateLayerV1alpha1Url(id),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      createLayerRequest,)
+  }
+);}
+  
+
+
+
+export const getCreateLayerV1alpha1MutationOptions = <TError = ErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createLayerV1alpha1>>, TError,{id: string;data: CreateLayerRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+): UseMutationOptions<Awaited<ReturnType<typeof createLayerV1alpha1>>, TError,{id: string;data: CreateLayerRequest}, TContext> => {
+
+const mutationKey = ['createLayerV1alpha1'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createLayerV1alpha1>>, {id: string;data: CreateLayerRequest}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  createLayerV1alpha1(id,data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateLayerV1alpha1MutationResult = NonNullable<Awaited<ReturnType<typeof createLayerV1alpha1>>>
+    export type CreateLayerV1alpha1MutationBody = CreateLayerRequest
+    export type CreateLayerV1alpha1MutationError = ErrorResponse
+
+    /**
+ * @summary Create a new layer
+ */
+export const useCreateLayerV1alpha1 = <TError = ErrorResponse,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createLayerV1alpha1>>, TError,{id: string;data: CreateLayerRequest}, TContext>, request?: SecondParameter<typeof fetcher>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createLayerV1alpha1>>,
+        TError,
+        {id: string;data: CreateLayerRequest},
+        TContext
+      > => {
+      return useMutation(getCreateLayerV1alpha1MutationOptions(options), queryClient);
+    }
