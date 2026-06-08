@@ -40,7 +40,9 @@
     "noNamespaces": "No application namespaces found in your cluster. Deploy workloads to get started.",
     "namespaces": "Namespaces",
     "searchNamespaces": "Search namespaces...",
-    "allAssigned": "All namespaces assigned"
+    "allAssigned": "All namespaces assigned",
+    "switcher": "Layer switcher",
+    "switchTo": "Switch to {{name}}"
   },
   "context": {
     "rename": "Rename",

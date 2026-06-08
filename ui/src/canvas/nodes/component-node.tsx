@@ -28,6 +28,8 @@ export function ComponentNode({
 }: NodeProps<ComponentNodeType>) {
   const activeLayerId = useCanvasStore((s) => s.activeLayerId);
   const isRenaming = useCanvasStore((s) => s.renamingNodeId === id);
+
+  const hasProjection = activeLayerId ? activeLayerId in data.layers : true;
   const projection =
     data.layers[activeLayerId ?? ""] ?? Object.values(data.layers)[0];
 
@@ -38,7 +40,8 @@ export function ComponentNode({
     <div
       className={cn(
         "orray-node orray-node--component",
-        selected && "orray-node--selected"
+        selected && "orray-node--selected",
+        !hasProjection && "orray-node--dimmed"
       )}
     >
       <Handle className="orray-handle" position={Position.Top} type="target" />

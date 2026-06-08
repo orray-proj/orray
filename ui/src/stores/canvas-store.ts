@@ -96,6 +96,7 @@ export const useCanvasStore = create<CanvasState>()(
       name: "orray-canvas",
       partialize: (state) => ({
         phase: state.phase,
+        activeLayerId: state.activeLayerId,
       }),
     }
   )

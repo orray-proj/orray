@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { LAYER_COLORS } from "@/canvas/layer-colors";
 import { createLayerV1alpha1, useListLayersV1alpha1 } from "@/generated/api";
 import { useCanvasStore } from "@/stores/canvas-store";
 import { routeTree } from "./__root";
@@ -67,16 +68,7 @@ const NS_META_MAP = new Map(MOCK_NAMESPACES.map((ns) => [ns.name, ns]));
 const STAGING_ID = "__staging__";
 const CREATE_LAYER_ID = "__create_layer__";
 
-const DEFAULT_COLORS = [
-  "#6366f1",
-  "#f59e0b",
-  "#10b981",
-  "#ef4444",
-  "#8b5cf6",
-  "#ec4899",
-  "#06b6d4",
-  "#f97316",
-];
+const DEFAULT_COLORS = LAYER_COLORS;
 
 interface Layer {
   color: string;
@@ -95,6 +87,7 @@ function CanvasLayersPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const setPhase = useCanvasStore((s) => s.setPhase);
+  const setActiveLayerId = useCanvasStore((s) => s.setActiveLayerId);
   const [layers, setLayers] = useState<Layer[]>([
     {
       id: "layer:default",
@@ -292,9 +285,14 @@ function CanvasLayersPage() {
       // Proceed even if API is unavailable (mock mode)
     }
     setSaving(false);
+    // Set the first layer as active before entering the canvas
+    const firstLayer = layers.find((l) => l.namespaces.length > 0) ?? layers[0];
+    if (firstLayer) {
+      setActiveLayerId(firstLayer.id);
+    }
     setPhase("reviewing");
     navigate({ to: "/canvas/$canvasId", params: { canvasId: "default" } });
-  }, [layers, setPhase, navigate]);
+  }, [layers, setPhase, setActiveLayerId, navigate]);
 
   const activeMeta =
     activeDrag?.type === "namespace"

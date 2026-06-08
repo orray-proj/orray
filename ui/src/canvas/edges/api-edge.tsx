@@ -59,10 +59,12 @@ export function ApiEdge(props: EdgeProps<CanvasEdge>) {
   }
 
   const layers = props.data?.layers;
-  const projection = layers?.[activeLayerId ?? Object.keys(layers)[0]];
+  const hasProjection = activeLayerId ? Boolean(layers?.[activeLayerId]) : true;
+  const fallbackKey = Object.keys(layers ?? {})[0] ?? "";
+  const projection = layers?.[activeLayerId ?? fallbackKey];
 
   return (
-    <>
+    <g className={hasProjection ? undefined : "orray-edge--dimmed"}>
       <BaseEdge
         id={props.id}
         path={edgePath}
@@ -82,6 +84,6 @@ export function ApiEdge(props: EdgeProps<CanvasEdge>) {
           {projection.protocol}
         </text>
       )}
-    </>
+    </g>
   );
 }

@@ -1,9 +1,12 @@
+import { LAYER_COLORS } from "./layer-colors";
 import type { CanvasEdge, CanvasNode } from "./types";
 
-const LAYER_ID = "layer:default";
+const PROD = "layer:production";
+const STAGING = "layer:staging";
 
 const nodes: CanvasNode[] = [
   // --- Ingress layer ---
+  // Production + Staging (different health)
   {
     id: "node:ingress-gateway",
     type: "component",
@@ -13,7 +16,7 @@ const nodes: CanvasNode[] = [
       kind: "gateway",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "ingress",
           health: "healthy",
           labels: { replicas: "2" },
@@ -26,11 +29,25 @@ const nodes: CanvasNode[] = [
             uid: "a1",
           },
         },
+        [STAGING]: {
+          namespace: "ingress-staging",
+          health: "healthy",
+          labels: { replicas: "1" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "networking.k8s.io/v1",
+            resource: "Ingress",
+            namespace: "ingress-staging",
+            name: "ingress-gateway",
+            uid: "a1s",
+          },
+        },
       },
     },
   },
 
   // --- Service layer ---
+  // Production + Staging (version diff)
   {
     id: "node:api-server",
     type: "component",
@@ -40,7 +57,7 @@ const nodes: CanvasNode[] = [
       kind: "service",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { replicas: "3", version: "v1.2.0" },
@@ -53,9 +70,23 @@ const nodes: CanvasNode[] = [
             uid: "b1",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { replicas: "1", version: "v1.3.0-rc2" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "staging",
+            name: "api-server",
+            uid: "b1s",
+          },
+        },
       },
     },
   },
+  // Production + Staging (health diff)
   {
     id: "node:auth-service",
     type: "component",
@@ -65,7 +96,7 @@ const nodes: CanvasNode[] = [
       kind: "service",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { replicas: "2", version: "v3.1.0" },
@@ -78,9 +109,23 @@ const nodes: CanvasNode[] = [
             uid: "b2",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "degraded",
+          labels: { replicas: "1", version: "v3.2.0-beta" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "staging",
+            name: "auth-service",
+            uid: "b2s",
+          },
+        },
       },
     },
   },
+  // Production + Staging
   {
     id: "node:order-service",
     type: "component",
@@ -90,7 +135,7 @@ const nodes: CanvasNode[] = [
       kind: "service",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { replicas: "3", version: "v2.3.1" },
@@ -103,9 +148,23 @@ const nodes: CanvasNode[] = [
             uid: "b3",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { replicas: "1", version: "v2.4.0-rc1" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "StatefulSet",
+            namespace: "staging",
+            name: "order-service",
+            uid: "b3s",
+          },
+        },
       },
     },
   },
+  // Production only — will dim on staging
   {
     id: "node:payment-service",
     type: "component",
@@ -115,7 +174,7 @@ const nodes: CanvasNode[] = [
       kind: "service",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "degraded",
           labels: { replicas: "2", version: "v1.8.3" },
@@ -131,6 +190,7 @@ const nodes: CanvasNode[] = [
       },
     },
   },
+  // Production only — will dim on staging
   {
     id: "node:notification-service",
     type: "component",
@@ -140,7 +200,7 @@ const nodes: CanvasNode[] = [
       kind: "service",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "critical",
           labels: { replicas: "1" },
@@ -158,6 +218,7 @@ const nodes: CanvasNode[] = [
   },
 
   // --- Worker layer ---
+  // Production + Staging
   {
     id: "node:email-worker",
     type: "component",
@@ -167,7 +228,7 @@ const nodes: CanvasNode[] = [
       kind: "job",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: {},
@@ -180,9 +241,23 @@ const nodes: CanvasNode[] = [
             uid: "c1",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: {},
+          source: {
+            provider: "kubernetes",
+            apiVersion: "batch/v1",
+            resource: "Job",
+            namespace: "staging",
+            name: "email-worker",
+            uid: "c1s",
+          },
+        },
       },
     },
   },
+  // Production only — will dim on staging
   {
     id: "node:report-generator",
     type: "component",
@@ -192,7 +267,7 @@ const nodes: CanvasNode[] = [
       kind: "job",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "unknown",
           labels: {},
@@ -210,6 +285,7 @@ const nodes: CanvasNode[] = [
   },
 
   // --- Resource layer ---
+  // Production + Staging (shared infra)
   {
     id: "node:postgres-primary",
     type: "resource",
@@ -219,7 +295,7 @@ const nodes: CanvasNode[] = [
       kind: "database",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { provider: "PostgreSQL" },
@@ -232,9 +308,23 @@ const nodes: CanvasNode[] = [
             uid: "d1",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { provider: "PostgreSQL" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "Service",
+            namespace: "staging",
+            name: "postgres-staging",
+            uid: "d1s",
+          },
+        },
       },
     },
   },
+  // Production + Staging
   {
     id: "node:redis-cache",
     type: "resource",
@@ -244,7 +334,7 @@ const nodes: CanvasNode[] = [
       kind: "cache",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { provider: "Redis" },
@@ -257,9 +347,23 @@ const nodes: CanvasNode[] = [
             uid: "d2",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { provider: "Redis" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "Service",
+            namespace: "staging",
+            name: "redis-cache",
+            uid: "d2s",
+          },
+        },
       },
     },
   },
+  // Production only — will dim on staging
   {
     id: "node:rabbitmq",
     type: "resource",
@@ -269,7 +373,7 @@ const nodes: CanvasNode[] = [
       kind: "queue",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "degraded",
           labels: { provider: "RabbitMQ" },
@@ -285,6 +389,7 @@ const nodes: CanvasNode[] = [
       },
     },
   },
+  // Production + Staging
   {
     id: "node:s3-storage",
     type: "resource",
@@ -294,7 +399,7 @@ const nodes: CanvasNode[] = [
       kind: "storage",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { provider: "S3" },
@@ -307,9 +412,23 @@ const nodes: CanvasNode[] = [
             uid: "d4",
           },
         },
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { provider: "S3" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "v1",
+            resource: "PersistentVolumeClaim",
+            namespace: "staging",
+            name: "s3-storage",
+            uid: "d4s",
+          },
+        },
       },
     },
   },
+  // Production only
   {
     id: "node:stripe-api",
     type: "resource",
@@ -319,7 +438,7 @@ const nodes: CanvasNode[] = [
       kind: "external",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           namespace: "production",
           health: "healthy",
           labels: { provider: "Stripe" },
@@ -335,10 +454,62 @@ const nodes: CanvasNode[] = [
       },
     },
   },
+
+  // --- Staging-only nodes (dim on production) ---
+  {
+    id: "node:feature-flags",
+    type: "component",
+    position: { x: 0, y: 0 },
+    data: {
+      name: "feature-flags",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { replicas: "1", version: "v0.2.0" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "staging",
+            name: "feature-flags",
+            uid: "s1",
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "node:debug-proxy",
+    type: "component",
+    position: { x: 0, y: 0 },
+    data: {
+      name: "debug-proxy",
+      kind: "service",
+      origin: "inferred",
+      layers: {
+        [STAGING]: {
+          namespace: "staging",
+          health: "healthy",
+          labels: { replicas: "1", version: "v0.1.0" },
+          source: {
+            provider: "kubernetes",
+            apiVersion: "apps/v1",
+            resource: "Deployment",
+            namespace: "staging",
+            name: "debug-proxy",
+            uid: "s2",
+          },
+        },
+      },
+    },
+  },
 ];
 
 const edges: CanvasEdge[] = [
-  // Ingress → services (api edges)
+  // Ingress -> services (api edges)
   {
     id: "edge:ingress-gateway->api-server:api",
     source: "node:ingress-gateway",
@@ -348,7 +519,12 @@ const edges: CanvasEdge[] = [
       kind: "api",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "http",
+          port: 8080,
+          labels: { "inferred-from": "ingress-rule" },
+        },
+        [STAGING]: {
           protocol: "http",
           port: 8080,
           labels: { "inferred-from": "ingress-rule" },
@@ -365,7 +541,12 @@ const edges: CanvasEdge[] = [
       kind: "api",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "http",
+          port: 8080,
+          labels: { "inferred-from": "ingress-rule" },
+        },
+        [STAGING]: {
           protocol: "http",
           port: 8080,
           labels: { "inferred-from": "ingress-rule" },
@@ -374,7 +555,7 @@ const edges: CanvasEdge[] = [
     },
   },
 
-  // api-server → downstream (api edges)
+  // api-server -> downstream (api edges)
   {
     id: "edge:api-server->auth-service:api",
     source: "node:api-server",
@@ -384,7 +565,12 @@ const edges: CanvasEdge[] = [
       kind: "api",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "grpc",
+          port: 9090,
+          labels: { "inferred-from": "env-var" },
+        },
+        [STAGING]: {
           protocol: "grpc",
           port: 9090,
           labels: { "inferred-from": "env-var" },
@@ -401,7 +587,12 @@ const edges: CanvasEdge[] = [
       kind: "api",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "grpc",
+          port: 9090,
+          labels: { "inferred-from": "env-var" },
+        },
+        [STAGING]: {
           protocol: "grpc",
           port: 9090,
           labels: { "inferred-from": "env-var" },
@@ -418,7 +609,7 @@ const edges: CanvasEdge[] = [
       kind: "api",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "grpc",
           port: 9090,
           labels: { "inferred-from": "service-selector" },
@@ -427,7 +618,7 @@ const edges: CanvasEdge[] = [
     },
   },
 
-  // Component → Resource (dependency edges)
+  // Component -> Resource (dependency edges)
   {
     id: "edge:api-server->redis-cache:dependency",
     source: "node:api-server",
@@ -437,7 +628,12 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "tcp",
+          port: 6379,
+          labels: { "inferred-from": "env-var" },
+        },
+        [STAGING]: {
           protocol: "tcp",
           port: 6379,
           labels: { "inferred-from": "env-var" },
@@ -454,7 +650,12 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "tcp",
+          port: 5432,
+          labels: { "inferred-from": "env-var" },
+        },
+        [STAGING]: {
           protocol: "tcp",
           port: 5432,
           labels: { "inferred-from": "env-var" },
@@ -471,7 +672,7 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "tcp",
           port: 5432,
           labels: { "inferred-from": "env-var" },
@@ -488,7 +689,7 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "https",
           port: 443,
           labels: { "inferred-from": "env-var" },
@@ -505,7 +706,7 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "tcp",
           port: 5432,
           labels: { "inferred-from": "env-var" },
@@ -522,7 +723,7 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "https",
           port: 443,
           labels: { "inferred-from": "env-var" },
@@ -539,7 +740,12 @@ const edges: CanvasEdge[] = [
       kind: "dependency",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
+          protocol: "https",
+          port: 443,
+          labels: { "inferred-from": "env-var" },
+        },
+        [STAGING]: {
           protocol: "https",
           port: 443,
           labels: { "inferred-from": "env-var" },
@@ -558,7 +764,7 @@ const edges: CanvasEdge[] = [
       kind: "event",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "amqp",
           port: 5672,
           labels: { "inferred-from": "env-var" },
@@ -575,7 +781,7 @@ const edges: CanvasEdge[] = [
       kind: "event",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "amqp",
           port: 5672,
           labels: { "inferred-from": "env-var" },
@@ -592,14 +798,56 @@ const edges: CanvasEdge[] = [
       kind: "event",
       origin: "inferred",
       layers: {
-        [LAYER_ID]: {
+        [PROD]: {
           protocol: "internal",
           labels: { "inferred-from": "env-var" },
         },
       },
     },
   },
+
+  // Staging-only edges
+  {
+    id: "edge:api-server->feature-flags:api",
+    source: "node:api-server",
+    target: "node:feature-flags",
+    type: "api",
+    data: {
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [STAGING]: {
+          protocol: "http",
+          port: 8080,
+          labels: { "inferred-from": "env-var" },
+        },
+      },
+    },
+  },
+  {
+    id: "edge:ingress-gateway->debug-proxy:api",
+    source: "node:ingress-gateway",
+    target: "node:debug-proxy",
+    type: "api",
+    data: {
+      kind: "api",
+      origin: "inferred",
+      layers: {
+        [STAGING]: {
+          protocol: "http",
+          port: 9090,
+          labels: { "inferred-from": "ingress-rule" },
+        },
+      },
+    },
+  },
 ];
+
+/** Layer metadata used by the layer switcher. */
+export const MOCK_LAYERS = [
+  { id: PROD, name: "Production", color: LAYER_COLORS[2] },
+  { id: STAGING, name: "Staging", color: LAYER_COLORS[1] },
+] as const;
 
 export function createMockTopology(): {
   nodes: CanvasNode[];

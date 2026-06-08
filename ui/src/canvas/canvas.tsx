@@ -4,33 +4,46 @@ import {
   MiniMap,
   ReactFlow,
   ReactFlowProvider,
+  useReactFlow,
 } from "@xyflow/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 import { useTheme } from "@/lib/theme";
 import { useCanvasStore } from "@/stores/canvas-store";
 import { CanvasContextMenu } from "./context-menu";
 import { edgeTypes } from "./edges/edge-types";
 import { layoutGraph } from "./layout";
-import { createMockTopology } from "./mock-data";
+import { createMockTopology, MOCK_LAYERS } from "./mock-data";
 import { nodeTypes } from "./nodes/node-types";
-import { EditButton } from "./panels/edit-button";
-import { ReviewPanel } from "./panels/review-panel";
+import { CanvasControl } from "./panels/edit-button";
+import { LayerSwitcher } from "./panels/layer-switcher";
 
 function CanvasInner() {
-  const { nodes, edges, phase, onNodesChange, setNodes, setEdges } =
-    useCanvasStore(
-      useShallow((s) => ({
-        nodes: s.nodes,
-        edges: s.edges,
-        phase: s.phase,
-        onNodesChange: s.onNodesChange,
-        setNodes: s.setNodes,
-        setEdges: s.setEdges,
-      }))
-    );
+  const {
+    nodes,
+    edges,
+    phase,
+    activeLayerId,
+    onNodesChange,
+    setNodes,
+    setEdges,
+    setActiveLayerId,
+  } = useCanvasStore(
+    useShallow((s) => ({
+      nodes: s.nodes,
+      edges: s.edges,
+      phase: s.phase,
+      activeLayerId: s.activeLayerId,
+      onNodesChange: s.onNodesChange,
+      setNodes: s.setNodes,
+      setEdges: s.setEdges,
+      setActiveLayerId: s.setActiveLayerId,
+    }))
+  );
 
   const { resolvedTheme } = useTheme();
+  const { fitView } = useReactFlow();
+  const hasFitRef = useRef(false);
 
   useEffect(() => {
     const mock = createMockTopology();
@@ -39,7 +52,30 @@ function CanvasInner() {
     setEdges(mock.edges);
   }, [setNodes, setEdges]);
 
+  // Fit view once after initial data load, not on every render
+  useEffect(() => {
+    if (!hasFitRef.current && nodes.length > 0) {
+      hasFitRef.current = true;
+      // Small delay so ReactFlow has measured the nodes
+      requestAnimationFrame(() => fitView());
+    }
+  }, [nodes.length, fitView]);
+
+  // Fallback: ensure activeLayerId is always set.
+  // The layer setup page sets this on Continue (Q7b), but if the user
+  // bookmarks the canvas URL directly or if the persisted ID doesn't match
+  // any available layer (e.g. mock data uses different IDs than the BE),
+  // this resets to the first available layer. This disconnect between
+  // layer-setup IDs and mock topology IDs is accepted for now — it will
+  // converge when GET /topology returns real data keyed by real layer IDs.
+  useEffect(() => {
+    if (!activeLayerId && MOCK_LAYERS.length > 0) {
+      setActiveLayerId(MOCK_LAYERS[0].id);
+    }
+  }, [activeLayerId, setActiveLayerId]);
+
   const isReviewing = phase === "reviewing";
+  const showControls = phase === "reviewing" || phase === "committed";
 
   return (
     <CanvasContextMenu>
@@ -49,7 +85,6 @@ function CanvasInner() {
           edges={edges}
           edgesReconnectable={false}
           edgeTypes={edgeTypes}
-          fitView
           nodes={nodes}
           nodesConnectable={false}
           nodesDraggable={isReviewing}
@@ -61,8 +96,8 @@ function CanvasInner() {
           <Background color="var(--orray-canvas-dot-color)" gap={20} size={1} />
           <Controls />
           <MiniMap pannable zoomable />
-          {phase === "reviewing" && <ReviewPanel />}
-          {phase === "committed" && <EditButton />}
+          {showControls && <CanvasControl />}
+          <LayerSwitcher layers={[...MOCK_LAYERS]} />
         </ReactFlow>
       </div>
     </CanvasContextMenu>

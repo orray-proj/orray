@@ -152,6 +152,86 @@
 .orray-floating-panel--compact {
   gap: 2px;
   padding: 2px 4px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* --- Canvas control (morphing circle ↔ bar) --- */
+.orray-canvas-control {
+  position: absolute;
+  z-index: 10;
+  color: var(--orray-node-fg);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  background: var(--orray-node-bg);
+  border: 1px solid var(--orray-node-border);
+  border-radius: 999px;
+  box-shadow: var(--orray-node-shadow);
+}
+
+.orray-canvas-control:active {
+  cursor: grabbing;
+}
+
+.orray-canvas-control__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orray-node-fg);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.orray-canvas-control__icon:hover {
+  opacity: 0.7;
+}
+
+.orray-canvas-control__bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 100%;
+  padding: 0 6px 0 14px;
+  font-family: var(--orray-font-family);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.orray-canvas-control__label {
+  opacity: 0.5;
+}
+
+.orray-canvas-control__stat {
+  font-weight: 500;
+}
+
+.orray-canvas-control__sep {
+  flex-shrink: 0;
+  width: 1px;
+  height: 14px;
+  background: var(--orray-node-border);
+}
+
+.orray-canvas-control__action {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--orray-node-bg);
+  cursor: pointer;
+  background: var(--orray-node-fg);
+  border: none;
+  border-radius: 999px;
+  transition: opacity 0.15s;
+}
+
+.orray-canvas-control__action:hover {
+  opacity: 0.8;
 }
 
 .orray-floating-panel__separator {
@@ -238,4 +318,158 @@
 
 .orray-context-menu__item--destructive {
   color: var(--orray-health-critical);
+}
+
+/* --- Layer switcher --- */
+.orray-layer-switcher {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.orray-layer-switcher:active {
+  cursor: grabbing;
+}
+
+.orray-layer-switcher__glow {
+  position: absolute;
+  inset: -12px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 16px;
+  opacity: 0.08;
+  filter: blur(20px);
+}
+
+.orray-layer-switcher__stack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 160px;
+}
+
+.orray-layer-switcher__plane {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 32px;
+  padding: 0 12px;
+  font-family: var(--orray-font-family);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--orray-node-fg);
+  cursor: pointer;
+  background: var(--orray-node-bg);
+  border: 1px solid var(--orray-node-border);
+  border-radius: 8px;
+  box-shadow: var(--orray-node-shadow);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: border-color 0.2s;
+}
+
+.orray-layer-switcher__plane:hover {
+  border-color: color-mix(
+    in oklch,
+    var(--orray-node-border) 50%,
+    var(--orray-node-fg) 20%
+  );
+}
+
+.orray-layer-switcher__plane[data-active] {
+  border-color: color-mix(
+    in oklch,
+    var(--orray-node-border) 30%,
+    var(--orray-node-fg) 30%
+  );
+  box-shadow:
+    var(--orray-node-shadow),
+    0 4px 16px oklch(0 0 0 / 0.1);
+}
+
+.orray-layer-switcher__indicator-wrap {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+}
+
+.orray-layer-switcher__hint {
+  flex-shrink: 0;
+  width: 14px;
+  font-family: ui-monospace, "SF Mono", "Fira Code", monospace;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  pointer-events: none;
+}
+
+.orray-layer-switcher__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px oklch(0 0 0 / 0.08);
+}
+
+.orray-layer-switcher__pulse {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  animation: orray-pulse 2s ease-out infinite;
+}
+
+@keyframes orray-pulse {
+  0% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.orray-layer-switcher__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.orray-layer-switcher__edge-light {
+  position: absolute;
+  top: 4px;
+  right: -1px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 1px;
+  opacity: 0.7;
+}
+
+/* --- Node/Edge dimming for inactive layers --- */
+.orray-node--dimmed {
+  opacity: 0.25;
+  filter: saturate(0.3);
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease;
+}
+
+.orray-edge--dimmed {
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
 }

@@ -40,7 +40,9 @@
     "noNamespaces": "Nessun namespace applicativo trovato nel cluster. Distribuisci workload per iniziare.",
     "namespaces": "Namespace",
     "searchNamespaces": "Cerca namespace...",
-    "allAssigned": "Tutti i namespace assegnati"
+    "allAssigned": "Tutti i namespace assegnati",
+    "switcher": "Selettore layer",
+    "switchTo": "Passa a {{name}}"
   },
   "context": {
     "rename": "Rinomina",
